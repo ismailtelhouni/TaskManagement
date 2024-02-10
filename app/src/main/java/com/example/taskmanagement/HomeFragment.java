@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.taskmanagement.adapters.TaskItemAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -65,17 +64,26 @@ public class HomeFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+    private void fetchDataAndProcess() {
+        getTasks(new OnTaskFetchListener() {
+            @Override
+            public void onTaskFetchSuccess(List<Task> tasks) {
+                // Le code qui dépend des tâches récupérées depuis Firestore
+                Log.d(TAG, "Tâches récupérées avec succès : " + tasks);
+                tasksListView.setAdapter(new TaskItemAdapter(getActivity(), tasks));
+            }
 
-        tasks = getTasks();
-
+            @Override
+            public void onTaskFetchFailure(Exception e) {
+                Log.e(TAG, "Erreur lors de la récupération des tâches : ", e);
+            }
+        });
     }
 
-    private List<Task> getTasks() {
+    private void getTasks(OnTaskFetchListener listener) {
 
-        db.collection("cities")
+        tasks = new ArrayList<>();
+        db.collection("tasks")
                 .get()
                 .addOnCompleteListener((OnCompleteListener<QuerySnapshot>) task -> {
                     if (task.isSuccessful()) {
@@ -87,15 +95,15 @@ public class HomeFragment extends Fragment {
                             Task task1 = new Task(title,description,startDate,endDate);
                             task1.setId(document.getId());
                             tasks.add(task1);
-                            Toast.makeText(getActivity(),"Vous essayez d'acheter un "+document.getId()+", pour le prix  de "+document.getData().get("title")+" dh",Toast.LENGTH_SHORT).show();
                             Log.d(TAG, document.getId() + " => " + document.getData());
                         }
+                        Log.d(TAG, "Tâches récupérées avec succès : " + tasks);
+                        listener.onTaskFetchSuccess(tasks);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
+                        listener.onTaskFetchFailure(task.getException());
                     }
                 });
-
-        return null;
     }
 
     @Override
@@ -107,7 +115,6 @@ public class HomeFragment extends Fragment {
         }
 
         db = FirebaseFirestore.getInstance();
-
     }
 
     @Override
@@ -118,16 +125,17 @@ public class HomeFragment extends Fragment {
 
         tasksListView = view.findViewById(R.id.tasks_list_view);
 
-        List<Task> taskList = new ArrayList<>();
+        fetchDataAndProcess();
 
-        taskList.add(new Task("first title","first discription","02/15/2024","02/20/2024"));
-        taskList.add(new Task("second title","second discription","02/15/2024","02/20/2024"));
-
-
-        tasksListView.setAdapter(new TaskItemAdapter(getActivity() , taskList));
+//        List<Task> taskList = new ArrayList<>();
+//
+//        taskList.add(new Task("first title","first discription","02/15/2024","02/20/2024"));
+//        taskList.add(new Task("second title","second discription","02/15/2024","02/20/2024"));
 
         return view;
-
-
+    }
+    interface OnTaskFetchListener {
+        void onTaskFetchSuccess(List<Task> tasks);
+        void onTaskFetchFailure(Exception e);
     }
 }

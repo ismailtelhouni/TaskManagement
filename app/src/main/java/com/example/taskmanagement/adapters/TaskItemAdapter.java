@@ -27,7 +27,11 @@ public class TaskItemAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return tasks.size();
+        if (tasks != null) {
+            return tasks.size();
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -58,6 +62,13 @@ public class TaskItemAdapter extends BaseAdapter {
 
         TextView itemDate = view.findViewById(R.id.item_date);
         itemDate.setText(date);
+
+        view.findViewById(R.id.task_item_card).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         return view;
     }
