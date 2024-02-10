@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item
+        android:id="@+id/home"
+        android:title="@string/home"
+        android:icon="@drawable/baseline_home_24"
+        />
+    <item
+        android:id="@+id/add_new_task"
+        android:title="@string/add_new_task"
+        android:icon="@drawable/baseline_add_24"
+        />
+    <item
+        android:id="@+id/settings"
+        android:title="@string/settings"
+        android:icon="@drawable/baseline_settings_24"
+        />
+
+</menu>

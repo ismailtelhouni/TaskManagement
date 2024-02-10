@@ -1,0 +1,27 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">TaskManagement</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="click_to_login">Click to login</string>
+    <string name="click_to_register">Click to Register</string>
+    <string name="logout">Logout</string>
+    <string name="nom">Nom</string>
+    <string name="prenom">Prenom</string>
+    <string name="tel">Telephone</string>
+    <string name="list_tasks">List Tasks</string>
+    <string name="menu">Menu</string>
+    <string name="option_1">Option 1</string>
+    <string name="add_new_task">Add new Task</string>
+    <string name="home">Home</string>
+    <string name="settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment home</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="date_de_debut">Date de début</string>
+    <string name="date_de_fin">Date de fin</string>
+    <string name="save">Save</string>
+    <string name="titre_item">Titre :</string>
+    <string name="date_item">Date :</string>
+</resources>
