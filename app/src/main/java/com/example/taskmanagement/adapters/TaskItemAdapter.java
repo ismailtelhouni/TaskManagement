@@ -1,28 +1,42 @@
 package com.example.taskmanagement.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.TaskFragment;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
+import java.util.Objects;
 
 import model.Task;
 
-public class TaskItemAdapter extends BaseAdapter {
+public class TaskItemAdapter extends BaseAdapter{
 
     private Context context;
     private LayoutInflater inflater;
     private List<Task> tasks;
+    private FragmentManager fragmentManager;
+    private FirebaseFirestore db;
 
-    public TaskItemAdapter(Context context, List<Task> tasks) {
+    public TaskItemAdapter(Context context, List<Task> tasks, FragmentManager fragmentManager) {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.tasks = tasks;
+        this.fragmentManager = fragmentManager;
+        this.db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -58,16 +72,51 @@ public class TaskItemAdapter extends BaseAdapter {
         TextView itemTitle = view.findViewById(R.id.item_title);
         itemTitle.setText(title);
 
+        CheckBox checkBox = view.findViewById(R.id.checkbox);
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            private static final String TAG = "TASK_ITEM";
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Traitement à effectuer lorsque la case est cochée ou décochée
+                if (isChecked) {
+
+                    db.collection("tasks").document(currentTask.getId())
+                            .update("etat","FINISH")
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+
+                } else {
+
+                    db.collection("tasks").document(currentTask.getId())
+                            .update("etat","EN_COUR")
+                            .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                            .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+
+
+                }
+            }
+        });
+
+
+        CardView cardView = view.findViewById(R.id.task_item_card);
+
+        if(Objects.equals(currentTask.getEtat(), "EN_ATTENTE")){
+            checkBox.setChecked(false);
+        } else if (Objects.equals(currentTask.getEtat(), "FINISH")) {
+            checkBox.setChecked(true);
+        }
         String date = startDate + " - "+endDate;
 
         TextView itemDate = view.findViewById(R.id.item_date);
         itemDate.setText(date);
+        cardView.setOnClickListener(v -> {
 
-        view.findViewById(R.id.task_item_card).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance(currentTask.getId()));
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         });
 
         return view;

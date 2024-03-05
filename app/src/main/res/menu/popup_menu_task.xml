@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item
+        android:id="@+id/menu_task_item1"
+        android:title="finish"
+        android:icon="@drawable/logout24px"
+        />
+    <item
+        android:id="@+id/menu_task_item2"
+        android:title="attente" />
+
+</menu>

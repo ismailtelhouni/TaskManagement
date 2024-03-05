@@ -24,4 +24,15 @@
     <string name="save">Save</string>
     <string name="titre_item">Titre :</string>
     <string name="date_item">Date :</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="date">date</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="upload">Upload</string>
+    <string name="update_task">update Task</string>
+    <string name="update">Update</string>
+    <string-array name="task_etats">
+        <item>finish</item>
+        <item>pending</item>
+    </string-array>
 </resources>

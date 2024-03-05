@@ -9,10 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.example.taskmanagement.adapters.TaskItemAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -41,6 +46,9 @@ public class HomeFragment extends Fragment {
     private List<Task> tasks;
     private ListView tasksListView ;
     private FirebaseFirestore db;
+    private ProgressBar progressBar;
+    private FirebaseUser currentUser;
+    private FirebaseAuth mAuth;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -70,7 +78,8 @@ public class HomeFragment extends Fragment {
             public void onTaskFetchSuccess(List<Task> tasks) {
                 // Le code qui dépend des tâches récupérées depuis Firestore
                 Log.d(TAG, "Tâches récupérées avec succès : " + tasks);
-                tasksListView.setAdapter(new TaskItemAdapter(getActivity(), tasks));
+                hideDialog();
+                tasksListView.setAdapter(new TaskItemAdapter(getActivity(), tasks,getActivity().getSupportFragmentManager()));
             }
 
             @Override
@@ -83,7 +92,11 @@ public class HomeFragment extends Fragment {
     private void getTasks(OnTaskFetchListener listener) {
 
         tasks = new ArrayList<>();
-        db.collection("tasks")
+
+        CollectionReference userTasksRef = db.collection("user").document(currentUser.getEmail()).collection("tasks");
+
+        userTasksRef
+                .orderBy("startDate", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener((OnCompleteListener<QuerySnapshot>) task -> {
                     if (task.isSuccessful()) {
@@ -92,8 +105,17 @@ public class HomeFragment extends Fragment {
                             String description = document.getString("description");
                             String startDate = document.getString("startDate");
                             String endDate = document.getString("endDate");
-                            Task task1 = new Task(title,description,startDate,endDate);
+
+                            String etat = document.getString("etat");
+                            Task task1 = new Task();
                             task1.setId(document.getId());
+                            task1.setTitle(title);
+                            task1.setDescription(description);
+                            task1.setStartDate(startDate);
+                            task1.setEndDate(endDate);
+                            task1.setDoc_url(document.getString("doc_url"));
+                            task1.setImg(document.getString("img"));
+
                             tasks.add(task1);
                             Log.d(TAG, document.getId() + " => " + document.getData());
                         }
@@ -115,6 +137,7 @@ public class HomeFragment extends Fragment {
         }
 
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -124,13 +147,14 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         tasksListView = view.findViewById(R.id.tasks_list_view);
+        progressBar = view.findViewById(R.id.progressBar);
 
+        currentUser = mAuth.getCurrentUser();
+
+        Log.d(TAG,"user :"+currentUser.toString());
+
+        showDialog();
         fetchDataAndProcess();
-
-//        List<Task> taskList = new ArrayList<>();
-//
-//        taskList.add(new Task("first title","first discription","02/15/2024","02/20/2024"));
-//        taskList.add(new Task("second title","second discription","02/15/2024","02/20/2024"));
 
         return view;
     }
@@ -138,4 +162,19 @@ public class HomeFragment extends Fragment {
         void onTaskFetchSuccess(List<Task> tasks);
         void onTaskFetchFailure(Exception e);
     }
+
+    private void showDialog(){
+
+        progressBar.setVisibility(View.VISIBLE);
+        tasksListView.setVisibility(View.GONE);
+
+    }
+
+    private void hideDialog(){
+
+        progressBar.setVisibility(View.GONE);
+        tasksListView.setVisibility(View.VISIBLE);
+
+    }
+
 }

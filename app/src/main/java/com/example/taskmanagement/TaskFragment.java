@@ -3,26 +3,61 @@ package com.example.taskmanagement;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.example.taskmanagement.transformation.BorderTransformation;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
+
+import java.util.Arrays;
+
+import model.Task;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link TaskFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TaskFragment extends Fragment {
+public class TaskFragment extends Fragment implements View.OnClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String TASK_ID = "1";
+    private static final String TAG = "TaskFragment";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String task_id;
+    private Task taskItem;
+    private TextView taskItemTitle;
+    private TextView taskItemDate;
+    private TextView taskItemDescription;
+    private FirebaseFirestore db;
+    private ImageView taskItemDone , taskItemPending , taskItemImg;
+    private Spinner spinner;
+    private Button taskItemEdit,taskItemDelete;
+    private ProgressBar progressBar;
+    private LinearLayout taskItemVisibility;
+    private FirebaseUser currentUser;
+    private FirebaseAuth mAuth;
 
     public TaskFragment() {
         // Required empty public constructor
@@ -32,16 +67,14 @@ public class TaskFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param id Parameter 1.
      * @return A new instance of fragment TaskFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TaskFragment newInstance(String param1, String param2) {
+    public static TaskFragment newInstance(String id) {
         TaskFragment fragment = new TaskFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(TASK_ID, id);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,15 +83,191 @@ public class TaskFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            task_id = getArguments().getString(TASK_ID);
         }
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+    }
+
+    private void fetchDataAndProcess(){
+        getTask(new OnTaskFetchListener() {
+            @Override
+            public void onTaskFetchSuccess(Task task) {
+                Log.d(TAG, "Tâches récupérées avec succès : " + task);
+                taskItemTitle.setText(task.getTitle());
+                taskItemDescription.setText(task.getDescription());
+
+                Picasso.with(getContext())
+                        .load(task.getImg())
+                        .into(taskItemImg);
+
+                String date = task.getStartDate()+" - "+task.getEndDate();
+                taskItemDate.setText(date);
+
+                String[] etatsArray = getResources().getStringArray(R.array.task_etats);
+
+
+                if(task.getEtat().equals("FINISH")){
+                    taskItemDone.setVisibility(View.VISIBLE);
+                    taskItemPending.setVisibility(View.GONE);
+
+                    String choix = "finish";
+                    int position = Arrays.asList(etatsArray).indexOf(choix);
+                    spinner.setSelection(position);
+
+
+                }else{
+
+                    taskItemDone.setVisibility(View.GONE);
+                    taskItemPending.setVisibility(View.VISIBLE);
+
+                    String choix = "pending";
+                    int position = Arrays.asList(etatsArray).indexOf(choix);
+                    spinner.setSelection(position);
+                }
+                hideDialog();
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+
+                        String textSelected = adapterView.getItemAtPosition(position).toString();
+                        Log.d(TAG, "textttt Selected : "+textSelected);
+
+                        if(textSelected.equals("finish")){
+
+                            taskItemDone.setVisibility(View.VISIBLE);
+                            taskItemPending.setVisibility(View.GONE);
+
+                            db.collection("tasks").document(task_id)
+                                    .update("etat","FINISH")
+                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                        }else{
+
+                            taskItemDone.setVisibility(View.GONE);
+                            taskItemPending.setVisibility(View.VISIBLE);
+
+                            db.collection("tasks").document(task_id)
+                                    .update("etat","EN_COUR")
+                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
+
+            }
+            @Override
+            public void onTaskFetchFailure(Exception e) {
+                Log.e(TAG, "Erreur lors de la récupération des tâches : ", e);
+            }
+        });
+    }
+
+    public void getTask(OnTaskFetchListener listener ){
+
+        DocumentReference userTaskRef = db.collection("user").document(currentUser.getEmail()).collection("tasks").document(task_id);
+        userTaskRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+
+                    taskItem = new Task();
+
+                    taskItem.setId(task_id);
+                    taskItem.setTitle(document.getString("title"));
+                    taskItem.setDescription(document.getString("description"));
+                    taskItem.setStartDate(document.getString("startDate"));
+                    taskItem.setEndDate(document.getString("endDate"));
+                    taskItem.setEtat(document.getString("etat"));
+                    taskItem.setDoc_url(document.getString("doc_url"));
+                    taskItem.setImg(document.getString("img"));
+
+                    listener.onTaskFetchSuccess(taskItem);
+                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                } else {
+                    Log.d(TAG, "No such document");
+                }
+            } else {
+                Log.d(TAG, "get failed with ", task.getException());
+                listener.onTaskFetchFailure(task.getException());
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_task, container, false);
+        View view = inflater.inflate(R.layout.fragment_task, container, false);
+        taskItemTitle = view.findViewById(R.id.task_item_title);
+        taskItemDescription = view.findViewById(R.id.task_item_description);
+        taskItemDate = view.findViewById(R.id.task_item_date);
+        taskItemPending = view.findViewById(R.id.task_item_pending);
+        taskItemDone = view.findViewById(R.id.task_item_done);
+        spinner = view.findViewById(R.id.task_item_spinner);
+        taskItemEdit = view.findViewById(R.id.task_item_edit);
+        taskItemDelete = view.findViewById(R.id.task_item_delete);
+        taskItemImg = view.findViewById(R.id.task_item_img);
+        progressBar = view.findViewById(R.id.progressBar);
+        taskItemVisibility = view.findViewById(R.id.task_item_visibility);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.task_etats, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        taskItemEdit.setOnClickListener(this);
+
+        taskItemDelete.setOnClickListener(this);
+
+        currentUser = mAuth.getCurrentUser();
+
+        Log.d(TAG,"user :"+currentUser.toString());
+
+        showDialog();
+        fetchDataAndProcess();
+        return view;
     }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId()==R.id.task_item_edit){
+            Log.d(TAG,"bien edite");
+
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, EditTaskFragment.newInstance(task_id));
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+
+        } else if (view.getId()==R.id.task_item_delete) {
+            Log.d(TAG,"bien delete");
+
+        }
+    }
+
+    interface OnTaskFetchListener {
+        void onTaskFetchSuccess(Task task);
+        void onTaskFetchFailure(Exception e);
+    }
+
+    private void showDialog(){
+
+        progressBar.setVisibility(View.VISIBLE);
+        taskItemVisibility.setVisibility(View.GONE);
+
+    }
+
+    private void hideDialog(){
+
+        progressBar.setVisibility(View.GONE);
+        taskItemVisibility.setVisibility(View.VISIBLE);
+
+    }
+
 }

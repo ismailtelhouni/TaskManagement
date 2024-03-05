@@ -34,11 +34,11 @@ public class TasksActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         //button = findViewById(R.id.logout);
         user = mAuth.getCurrentUser();
-        replaceFragment(new HomeFragment());
+        replaceFragment(new HomeRecyclerViewsFragment());
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if(itemId == R.id.home){
-                replaceFragment(new HomeFragment());
+                replaceFragment(new HomeRecyclerViewsFragment());
             } else if( itemId == R.id.add_new_task ){
                 replaceFragment(new AddNewTaskFragment());
             } else if(itemId == R.id.settings){
