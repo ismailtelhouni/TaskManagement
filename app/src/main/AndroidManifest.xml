@@ -14,21 +14,21 @@
         android:theme="@style/Theme.Material3.Light"
         tools:targetApi="31">
         <activity
-            android:name=".AddTaskActivity"
+            android:name=".activity.AddTaskActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activity.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".TaskActivity"
+            android:name=".activity.TaskActivity"
             android:theme="@style/Theme.Material3.Light.NoActionBar"
             android:exported="false" />
         <activity
-            android:name=".TasksActivity"
+            android:name=".activity.TasksActivity"
             android:theme="@style/Theme.Material3.Light.NoActionBar"
             android:exported="false" />
         <activity
-            android:name=".AuthActivity"
+            android:name=".activity.AuthActivity"
             android:theme="@style/Theme.Material3.Light.NoActionBar"
             android:exported="true">
             <intent-filter>

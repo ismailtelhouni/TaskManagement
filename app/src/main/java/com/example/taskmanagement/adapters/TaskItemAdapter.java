@@ -15,13 +15,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.taskmanagement.R;
-import com.example.taskmanagement.TaskFragment;
+import com.example.taskmanagement.fragment.task.TaskFragment;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 import java.util.Objects;
 
-import model.Task;
+import com.example.taskmanagement.model.Task;
 
 public class TaskItemAdapter extends BaseAdapter{
 

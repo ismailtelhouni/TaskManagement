@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.task.HomeRecyclerViewsFragment">
+    tools:context=".fragment.event.EventsFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -20,9 +20,9 @@
             android:inputType="text" />
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:id="@+id/progressBar"
+            android:visibility="gone"
             >
             <ProgressBar
                 android:layout_width="match_parent"
@@ -30,14 +30,31 @@
                 android:layout_gravity="center"
                 />
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_add_event"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:paddingHorizontal="5dp"
+            android:paddingVertical="2dp"
+            android:contentDescription="@string/icon_add_new_event"
+            android:src="@drawable/add24px"
+            android:text="@string/add_new_task"
+            android:background="@drawable/rounded_btn_add_event"
+            />
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tasks_list_view"
+            android:id="@+id/events_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginVertical="10dp"
-            android:visibility="gone"
+            android:layout_below="@id/search"
             />
-    </LinearLayout>
+    </RelativeLayout>
 
 </FrameLayout>

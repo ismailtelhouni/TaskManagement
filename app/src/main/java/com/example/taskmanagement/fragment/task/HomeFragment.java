@@ -1,4 +1,4 @@
-package com.example.taskmanagement;
+package com.example.taskmanagement.fragment.task;
 
 import android.os.Bundle;
 
@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.example.taskmanagement.R;
 import com.example.taskmanagement.adapters.TaskItemAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,7 +25,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Task;
+import com.example.taskmanagement.model.Task;
 
 
 /**

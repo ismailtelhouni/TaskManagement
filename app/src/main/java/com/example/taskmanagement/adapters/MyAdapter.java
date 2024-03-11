@@ -1,6 +1,5 @@
 package com.example.taskmanagement.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taskmanagement.R;
-import com.example.taskmanagement.TaskFragment;
+import com.example.taskmanagement.fragment.task.TaskFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -26,7 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import model.Task;
+import com.example.taskmanagement.model.Task;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private final LinkedList<Task> tasks;

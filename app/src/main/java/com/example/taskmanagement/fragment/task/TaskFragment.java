@@ -1,4 +1,4 @@
-package com.example.taskmanagement;
+package com.example.taskmanagement.fragment.task;
 
 import android.os.Bundle;
 
@@ -19,18 +19,16 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.taskmanagement.transformation.BorderTransformation;
+import com.example.taskmanagement.R;
+import com.example.taskmanagement.dao.TaskDao;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 
-import model.Task;
+import com.example.taskmanagement.model.Task;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,9 +45,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename and change types of parameters
     private String task_id;
     private Task taskItem;
-    private TextView taskItemTitle;
-    private TextView taskItemDate;
-    private TextView taskItemDescription;
+    private TextView taskItemTitle ,taskItemDate , taskItemDescription ;
     private FirebaseFirestore db;
     private ImageView taskItemDone , taskItemPending , taskItemImg;
     private Spinner spinner;
@@ -58,6 +54,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     private LinearLayout taskItemVisibility;
     private FirebaseUser currentUser;
     private FirebaseAuth mAuth;
+    private TaskDao taskDao;
 
     public TaskFragment() {
         // Required empty public constructor
@@ -87,10 +84,11 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
         }
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        taskDao = new TaskDao(db,mAuth,getContext(),getActivity().getSupportFragmentManager());
     }
 
     private void fetchDataAndProcess(){
-        getTask(new OnTaskFetchListener() {
+        taskDao.getTask( task_id , new TaskDao.OnTaskFetchListener() {
             @Override
             public void onTaskFetchSuccess(Task task) {
                 Log.d(TAG, "Tâches récupérées avec succès : " + task);
@@ -139,29 +137,24 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
                             taskItemPending.setVisibility(View.GONE);
 
                             db.collection("tasks").document(task_id)
-                                    .update("etat","FINISH")
-                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
-                                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                                .update("etat","FINISH")
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
                         }else{
 
                             taskItemDone.setVisibility(View.GONE);
                             taskItemPending.setVisibility(View.VISIBLE);
 
                             db.collection("tasks").document(task_id)
-                                    .update("etat","EN_COUR")
-                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
-                                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
-
+                                .update("etat","EN_COUR")
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
                         }
-
                     }
-
                     @Override
                     public void onNothingSelected(AdapterView<?> adapterView) {
-
                     }
                 });
-
             }
             @Override
             public void onTaskFetchFailure(Exception e) {
@@ -169,41 +162,8 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
             }
         });
     }
-
-    public void getTask(OnTaskFetchListener listener ){
-
-        DocumentReference userTaskRef = db.collection("user").document(currentUser.getEmail()).collection("tasks").document(task_id);
-        userTaskRef.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DocumentSnapshot document = task.getResult();
-                if (document.exists()) {
-
-                    taskItem = new Task();
-
-                    taskItem.setId(task_id);
-                    taskItem.setTitle(document.getString("title"));
-                    taskItem.setDescription(document.getString("description"));
-                    taskItem.setStartDate(document.getString("startDate"));
-                    taskItem.setEndDate(document.getString("endDate"));
-                    taskItem.setEtat(document.getString("etat"));
-                    taskItem.setDoc_url(document.getString("doc_url"));
-                    taskItem.setImg(document.getString("img"));
-
-                    listener.onTaskFetchSuccess(taskItem);
-                    Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                } else {
-                    Log.d(TAG, "No such document");
-                }
-            } else {
-                Log.d(TAG, "get failed with ", task.getException());
-                listener.onTaskFetchFailure(task.getException());
-            }
-        });
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_task, container, false);
         taskItemTitle = view.findViewById(R.id.task_item_title);
@@ -233,7 +193,6 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
         fetchDataAndProcess();
         return view;
     }
-
     @Override
     public void onClick(View view) {
         if(view.getId()==R.id.task_item_edit){
@@ -247,27 +206,28 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
 
         } else if (view.getId()==R.id.task_item_delete) {
             Log.d(TAG,"bien delete");
-
+            taskDao.delete(task_id, new TaskDao.OnTaskDeleteListener() {
+                @Override
+                public void onTaskDeleteSuccess() {
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, new HomeRecyclerViewsFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+                @Override
+                public void onTaskDeleteFailure(Exception e) {
+                    Log.e(TAG, "Erreur lors de la suppression des tâches : ", e);
+                }
+            });
         }
     }
-
-    interface OnTaskFetchListener {
-        void onTaskFetchSuccess(Task task);
-        void onTaskFetchFailure(Exception e);
-    }
-
     private void showDialog(){
-
         progressBar.setVisibility(View.VISIBLE);
         taskItemVisibility.setVisibility(View.GONE);
-
     }
-
     private void hideDialog(){
-
         progressBar.setVisibility(View.GONE);
         taskItemVisibility.setVisibility(View.VISIBLE);
-
     }
-
 }

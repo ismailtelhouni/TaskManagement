@@ -1,8 +1,10 @@
-package com.example.taskmanagement;
+package com.example.taskmanagement.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.taskmanagement.R;
 
 public class AddTaskActivity extends AppCompatActivity {
 

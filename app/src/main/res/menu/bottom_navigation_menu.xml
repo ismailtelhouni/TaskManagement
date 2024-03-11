@@ -12,6 +12,11 @@
         android:icon="@drawable/baseline_add_24"
         />
     <item
+        android:id="@+id/events"
+        android:title="@string/events"
+        android:icon="@drawable/baseline_event_24"
+        />
+    <item
         android:id="@+id/settings"
         android:title="@string/settings"
         android:icon="@drawable/baseline_settings_24"

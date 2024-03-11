@@ -1,4 +1,4 @@
-package com.example.taskmanagement;
+package com.example.taskmanagement.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -10,6 +10,11 @@ import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
+import com.example.taskmanagement.R;
+import com.example.taskmanagement.fragment.event.EventsFragment;
+import com.example.taskmanagement.fragment.task.AddNewTaskFragment;
+import com.example.taskmanagement.fragment.task.HomeRecyclerViewsFragment;
+import com.example.taskmanagement.fragment.SettingsFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.example.taskmanagement.databinding.ActivityTasksBinding;
@@ -19,20 +24,17 @@ public class TasksActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     FirebaseUser user;
     ImageButton dropdownButton;
-
     ActivityTasksBinding binding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_tasks);
         binding = ActivityTasksBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        mAuth = FirebaseAuth.getInstance();
 
         dropdownButton = findViewById(R.id.dropdownButton);
-        mAuth = FirebaseAuth.getInstance();
-        //button = findViewById(R.id.logout);
+
         user = mAuth.getCurrentUser();
         replaceFragment(new HomeRecyclerViewsFragment());
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
@@ -43,6 +45,8 @@ public class TasksActivity extends AppCompatActivity {
                 replaceFragment(new AddNewTaskFragment());
             } else if(itemId == R.id.settings){
                 replaceFragment(new SettingsFragment());
+            } else if(itemId == R.id.events){
+                replaceFragment(new EventsFragment());
             }
             return true;
         });
@@ -76,12 +80,9 @@ public class TasksActivity extends AppCompatActivity {
                     return false;
                 }
             });
-
             popupMenu.show();
         });
-
     }
-
     private void replaceFragment(Fragment fragment){
 
         FragmentManager fragmentManager = getSupportFragmentManager();
