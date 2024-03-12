@@ -6,14 +6,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.fragment.event.EventFragment;
+import com.example.taskmanagement.fragment.task.TaskFragment;
 import com.example.taskmanagement.model.Event;
 import com.example.taskmanagement.model.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -62,6 +66,14 @@ public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyView
                 .load(event.getImage())
                 .into(holder.image);
 
+        holder.card.setOnClickListener(view -> {
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, new EventFragment());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+
+        });
     }
 
     @Override
@@ -73,6 +85,7 @@ public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyView
             View.OnClickListener {
         public TextView title , lieu , date ;
         public Event event;
+        public RelativeLayout card;
         public ImageView image;
 
         // Context is a reference to the activity that contain the the recycler view
@@ -83,6 +96,7 @@ public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyView
             date    = itemLayoutView.findViewById(R.id.item_date);
             lieu    = itemLayoutView.findViewById(R.id.item_lieu);
             image   = itemLayoutView.findViewById(R.id.item_image);
+            card    = itemLayoutView.findViewById(R.id.item_card);
 
         }
         @Override
