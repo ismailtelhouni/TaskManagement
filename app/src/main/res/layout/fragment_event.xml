@@ -12,7 +12,8 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="40dp"
-        tools:ignore="UselessParent">
+        tools:ignore="UselessParent"
+        >
         <ImageView
             android:id="@+id/item_image"
             android:layout_width="match_parent"
@@ -89,10 +90,12 @@
             android:layout_marginStart="20dp"
             />
         <LinearLayout
+            android:id="@+id/btn_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_alignParentBottom="true"
+
             >
             <Button
                 android:id="@+id/btn_edit_event"
@@ -109,5 +112,12 @@
                 />
         </LinearLayout>
     </RelativeLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
 
 </FrameLayout>

@@ -69,7 +69,7 @@ public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyView
         holder.card.setOnClickListener(view -> {
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, new EventFragment());
+            fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance(event.getId()));
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
 
