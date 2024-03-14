@@ -116,7 +116,7 @@ public class EventDao {
     }
     public void getEvent( String eventId , OnEventFetchListener listener ){
         if(currentUser.getEmail() != null){
-            DocumentReference userTaskRef = db.collection("user").document(currentUser.getEmail()).collection("events").document(eventId);
+            DocumentReference userTaskRef = db.collection("events").document(eventId);
             userTaskRef.get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
