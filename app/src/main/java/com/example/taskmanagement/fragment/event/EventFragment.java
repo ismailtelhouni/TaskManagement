@@ -2,6 +2,7 @@ package com.example.taskmanagement.fragment.event;
 
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.dao.EventDao;
 import com.example.taskmanagement.model.Event;
+import com.example.taskmanagement.shared.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,8 +41,9 @@ public class EventFragment extends Fragment implements View.OnClickListener {
 
     // TODO: Rename and change types of parameters
     private String event_id;
-    private TextView eventItemTitle , eventItemDate , eventItemDescription , eventItemLieu , eventItemCategory ;
+    private TextView eventItemTitle , eventItemDate , eventItemDescription , eventItemLieu , eventItemCategory , itemDateRest ;
     private FirebaseFirestore db ;
+    private FirebaseUser currentUser;
     private ImageView eventItemStatus , eventItemImage ;
     private ProgressBar progressBar ;
     private LinearLayout btnLayout ;
@@ -77,6 +80,7 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         }
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        currentUser = mAuth.getCurrentUser();
         eventDao = new EventDao( db , mAuth , getContext() , getActivity().getSupportFragmentManager() );
 
     }
@@ -100,12 +104,21 @@ public class EventFragment extends Fragment implements View.OnClickListener {
                 String date = event.getStartDate()+" - "+event.getEndDate();
                 eventItemDate.setText(date);
 
-                if(Objects.equals(event.getStatus(), "FINISH")){
-                    eventItemStatus.setColorFilter(R.color.color_finish);
-                }else if(Objects.equals(event.getStatus(), "EN_ATTENTE")){
-                    eventItemStatus.setColorFilter(R.color.color_pending);
-                }else if(Objects.equals(event.getStatus(), "EN_COUR")){
-                    eventItemStatus.setColorFilter(R.color.color_court);
+                String dateRest = Utils.getDaysUntilStartDate( event.getStartDate() , event.getEndDate() );
+                itemDateRest.setText(dateRest);
+
+                if(Objects.equals(dateRest, "Ended")){
+                    eventItemStatus.setColorFilter(ContextCompat.getColor(getContext(), R.color.color_finish));
+                }else if(Objects.equals(dateRest, "EN_ATTENTE")){
+                    eventItemStatus.setColorFilter( ContextCompat.getColor(getContext(), R.color.color_pending) );
+                }else if(Objects.equals(dateRest, "Commenced")){
+                    eventItemStatus.setColorFilter(ContextCompat.getColor(getContext(), R.color.color_court));
+                }else {
+                    eventItemStatus.setColorFilter( ContextCompat.getColor(getContext(), R.color.color_pending) );
+                }
+                Log.d(TAG , " currentUser.getEmail() : "+currentUser.getEmail()+" - event.getEmail() : "+event.getEmail());
+                if(!Objects.equals(currentUser.getEmail(), event.getEmail())){
+                    btnLayout.setVisibility(View.GONE);
                 }
                 hideDialog();
             }
@@ -129,6 +142,7 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         eventItemImage      = view.findViewById(R.id.item_image);
         eventItemLieu       = view.findViewById(R.id.item_lieu);
         eventItemStatus     = view.findViewById(R.id.item_status);
+        itemDateRest        = view.findViewById(R.id.item_date_rest);
 
         progressBar         = view.findViewById(R.id.progressBar);
         btnLayout           = view.findViewById(R.id.btn_layout);
@@ -142,16 +156,6 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         showDialog();
         fetchDataAndProcess();
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-//        if(!Objects.equals(currentUser.getEmail(), eventItem.getEmail())){
-//            btnLayout.setVisibility(View.GONE);
-//        }
     }
     private void showDialog(){
         progressBar.setVisibility(View.VISIBLE);

@@ -68,6 +68,7 @@ public class EventDao {
                                 event.setImage(document.getString("image"));
                                 event.setStatus(document.getString("status"));
                                 event.setLieu(document.getString("lieu"));
+                                event.setEmail(document.getString("userEmail"));
 
                                 events.add(event);
                                 Log.d(TAG, document.getId() + " => " + document.getData());
@@ -133,6 +134,7 @@ public class EventDao {
                         event.setImage(document.getString("image"));
                         event.setStatus(document.getString("status"));
                         event.setLieu(document.getString("lieu"));
+                        event.setEmail(document.getString("userEmail"));
 
                         listener.onEventFetchSuccess(event);
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());

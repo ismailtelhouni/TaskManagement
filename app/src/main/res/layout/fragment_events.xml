@@ -45,6 +45,7 @@
             android:src="@drawable/add24px"
             android:text="@string/add_new_task"
             android:background="@drawable/rounded_btn_add_event"
+            android:elevation="2dp"
             />
 
         <androidx.recyclerview.widget.RecyclerView
