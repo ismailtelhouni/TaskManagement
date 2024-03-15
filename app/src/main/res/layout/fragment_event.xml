@@ -38,6 +38,16 @@
             android:layout_height="wrap_content"
             android:text="@string/item_date"
             android:layout_toStartOf="@+id/item_status"
+            android:layout_below="@+id/item_description"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            />
+        <TextView
+            android:id="@+id/item_date_rest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/en_cours"
+            android:layout_toStartOf="@+id/item_status"
             android:layout_below="@+id/item_image"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="10dp"
