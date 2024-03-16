@@ -151,12 +151,11 @@ public class EventDao {
     public void delete( String eventId , OnEventDeleteListener listener){
 
         if(currentUser.getEmail() != null){
-            DocumentReference taskRef = db.collection("user")
-                .document(currentUser.getEmail())
+            DocumentReference eventRef = db
                 .collection("events")
                 .document(eventId);
 
-            taskRef.delete()
+            eventRef.delete()
                 .addOnSuccessListener(aVoid -> {
                     listener.onEventDeleteSuccess();
                 })

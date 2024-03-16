@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.dao.EventDao;
+import com.example.taskmanagement.fragment.task.HomeRecyclerViewsFragment;
 import com.example.taskmanagement.model.Event;
 import com.example.taskmanagement.shared.Utils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -169,6 +172,23 @@ public class EventFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if(view.getId()==R.id.btn_delete_event){
             Log.d(TAG,"bien delete");
+
+            eventDao.delete(event_id, new EventDao.OnEventDeleteListener() {
+                @Override
+                public void onEventDeleteSuccess() {
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, new EventsFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                }
+
+                @Override
+                public void onEventDeleteFailure(Exception e) {
+                    Log.e(TAG, "Erreur lors de la suppression des tâches : ", e);
+                }
+            });
+
         }else if(view.getId()==R.id.btn_edit_event){
             Log.d(TAG,"bien edite");
         }
