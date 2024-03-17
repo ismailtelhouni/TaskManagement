@@ -39,6 +39,7 @@
     <string name="lieu">Lieu</string>
     <string name="item_date">3/15/2024-4/15/2001</string>
     <string name="en_cours">En cours</string>
+    <string name="update_event">Update Event</string>
     <string-array name="task_etats">
         <item>finish</item>
         <item>pending</item>

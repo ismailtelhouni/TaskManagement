@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.dao.EventDao;
+import com.example.taskmanagement.fragment.task.EditTaskFragment;
 import com.example.taskmanagement.fragment.task.HomeRecyclerViewsFragment;
 import com.example.taskmanagement.model.Event;
 import com.example.taskmanagement.shared.Utils;
@@ -191,6 +192,13 @@ public class EventFragment extends Fragment implements View.OnClickListener {
 
         }else if(view.getId()==R.id.btn_edit_event){
             Log.d(TAG,"bien edite");
+
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, EditEventFragment.newInstance(event_id));
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+
         }
     }
 }
