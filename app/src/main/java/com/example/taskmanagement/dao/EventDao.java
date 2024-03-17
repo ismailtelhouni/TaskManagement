@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.fragment.event.AddEventFragment;
+import com.example.taskmanagement.fragment.event.EventFragment;
 import com.example.taskmanagement.fragment.event.EventsFragment;
 import com.example.taskmanagement.fragment.task.AddNewTaskFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -177,18 +178,18 @@ public class EventDao {
             event.put("category",eventModel.getCategory());
             event.put("lieu",eventModel.getLieu());
             event.put("status",eventModel.getStatus());
-            CollectionReference userTasksRef = db.collection("user").document(currentUser.getEmail()).collection("tasks");
+            CollectionReference userTasksRef = db.collection("events");
             userTasksRef.document(event_id)
-                    .update(event)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(context, "Add Task Success.", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-//                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                        fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance(event_id));
-//                        fragmentTransaction.addToBackStack(null);
-//                        fragmentTransaction.commit();
-                    })
-                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
+                .update(event)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "update Event Success.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance(event_id));
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                })
+                .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
         }
     }
     public interface OnEventsFetchListener {
