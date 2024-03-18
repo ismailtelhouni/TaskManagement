@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.fragment.task.TaskFragment;
+import com.example.taskmanagement.shared.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -28,6 +29,7 @@ import java.util.Objects;
 import com.example.taskmanagement.model.Task;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+    private static final String TAG = "EventsFragment";
     private final LinkedList<Task> tasks;
     private Context context;
     private final FirebaseFirestore db;
@@ -58,8 +60,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         Task task = tasks.get(position);
         holder.title.setText(task.getTitle());
 
-        String date = task.getStartDate()+" - "+task.getEndDate();
-        holder.date.setText(date);
+        String description = task.getDescription();
+        Log.d(TAG,"description : "+description);
+        if (description.length() > 10) {
+            description = description.substring(0, 10);
+        }
+        holder.description.setText(description);
+
+        String dateRest = Utils.getDaysUntilStartDate( task.getStartDate() , task.getEndDate() );
+        holder.date.setText(dateRest);
 
         if(Objects.equals(task.getEtat(), "EN_ATTENTE")){
             holder.box.setChecked(false);
@@ -109,10 +118,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
     public static class MyViewHolder extends RecyclerView.ViewHolder implements
             View.OnClickListener {
-        public TextView title;
-        public TextView date;
+        public TextView title , date , description;
         public CheckBox box;
-        public Task task;
         public CardView card;
 
         // Context is a reference to the activity that contain the the recycler view
@@ -123,6 +130,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             date    = itemLayoutView.findViewById(R.id.item_date);
             box     = itemLayoutView.findViewById(R.id.checkbox);
             card    = itemLayoutView.findViewById(R.id.task_item_card);
+            description = itemLayoutView.findViewById(R.id.item_description);
 
         }
         @Override
