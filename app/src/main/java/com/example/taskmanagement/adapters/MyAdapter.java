@@ -62,8 +62,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
         String description = task.getDescription();
         Log.d(TAG,"description : "+description);
-        if (description.length() > 10) {
-            description = description.substring(0, 10);
+        if (description.length() > 20) {
+            description = description.substring(0, 20)+"...";
         }
         holder.description.setText(description);
 

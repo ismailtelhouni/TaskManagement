@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">TaskManagement</string>
+    <string name="app_name">My Tasks</string>
     <string name="login">Login</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
