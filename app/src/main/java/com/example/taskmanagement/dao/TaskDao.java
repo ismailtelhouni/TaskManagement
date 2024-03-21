@@ -40,7 +40,7 @@ public class TaskDao {
         this.context=context;
         this.fragmentManager=fragmentManager;
     }
-    public void getTasks( OnTasksFetchListener listener) {
+        public void getTasks( OnTasksFetchListener listener) {
 
         LinkedList<Task> tasks = new LinkedList<>();
 
