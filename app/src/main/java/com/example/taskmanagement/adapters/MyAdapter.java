@@ -67,8 +67,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
         holder.description.setText(description);
 
-        String dateRest = Utils.getDaysUntilStartDate( task.getStartDate() , task.getEndDate() );
-        holder.date.setText(dateRest);
+//        String dateRest = Utils.getDaysUntilStartDate( task.getStartDate() , task.getEndDate() );
+//        holder.date.setText(dateRest);
 
         if(Objects.equals(task.getEtat(), "EN_ATTENTE")){
             holder.box.setChecked(false);

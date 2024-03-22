@@ -97,7 +97,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
                         .load(task.getImg())
                         .into(taskItemImg);
 
-                String date = task.getStartDate()+" - "+task.getEndDate();
+                String date = task.getDate()+" - "+task.getTime();
                 taskItemDate.setText(date);
 
                 String[] etatsArray = getResources().getStringArray(R.array.task_etats);

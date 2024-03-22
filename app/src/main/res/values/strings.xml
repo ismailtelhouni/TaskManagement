@@ -40,6 +40,10 @@
     <string name="item_date">3/15/2024-4/15/2001</string>
     <string name="en_cours">En cours</string>
     <string name="update_event">Update Event</string>
+    <string name="start_with">Start with</string>
+    <string name="heur">00:00 PM</string>
+    <string name="select_a_day">Select a day</string>
+    <string name="item_card_date">27.09.2024</string>
     <string-array name="task_etats">
         <item>finish</item>
         <item>pending</item>

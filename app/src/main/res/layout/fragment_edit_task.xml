@@ -81,54 +81,218 @@
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
 
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:baselineAligned="false">-->
+<!--            <com.google.android.material.textfield.TextInputLayout-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:layout_marginBottom="2dp"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:layout_marginEnd="5dp"-->
+<!--                app:boxCornerRadiusBottomEnd="10dp"-->
+<!--                app:boxCornerRadiusBottomStart="10dp"-->
+<!--                app:boxCornerRadiusTopEnd="10dp"-->
+<!--                app:boxCornerRadiusTopStart="10dp"-->
+<!--                >-->
+<!--                <com.google.android.material.textfield.TextInputEditText-->
+<!--                    android:id="@+id/date_de_debut"-->
+<!--                    android:hint="@string/date_de_debut"-->
+<!--                    android:inputType="date"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content">-->
+
+<!--                </com.google.android.material.textfield.TextInputEditText>-->
+<!--            </com.google.android.material.textfield.TextInputLayout>-->
+
+<!--            <com.google.android.material.textfield.TextInputLayout-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:layout_marginBottom="2dp"-->
+<!--                android:layout_marginStart="5dp"-->
+<!--                android:layout_marginEnd="20dp"-->
+<!--                app:boxCornerRadiusBottomEnd="10dp"-->
+<!--                app:boxCornerRadiusBottomStart="10dp"-->
+<!--                app:boxCornerRadiusTopEnd="10dp"-->
+<!--                app:boxCornerRadiusTopStart="10dp"-->
+<!--                >-->
+<!--                <com.google.android.material.textfield.TextInputEditText-->
+<!--                    android:id="@+id/date_de_fin"-->
+<!--                    android:hint="@string/date_de_fin"-->
+<!--                    android:inputType="date"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content">-->
+
+<!--                </com.google.android.material.textfield.TextInputEditText>-->
+<!--            </com.google.android.material.textfield.TextInputLayout>-->
+<!--        </LinearLayout>-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false">
-            <com.google.android.material.textfield.TextInputLayout
+            android:layout_marginVertical="10dp"
+            >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_date"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginBottom="2dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginEnd="5dp"
-                app:boxCornerRadiusBottomEnd="10dp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
-                app:boxCornerRadiusTopStart="10dp"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardUseCompatPadding="true"
+                app:contentPadding="2dp"
+                app:contentPaddingLeft="16dp"
+                app:contentPaddingRight="16dp"
                 >
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/date_de_debut"
-                    android:hint="@string/date_de_debut"
-                    android:inputType="date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
+                    <ImageView
+                        android:id="@+id/item_date_icon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/baseline_calendar_month_24"
+                        android:layout_marginEnd="6dp"
+                        android:layout_marginVertical="8dp"
+                        android:contentDescription="@string/description" />
+                    <TextView
+                        android:id="@+id/item_date_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/select_a_day"
+                        android:layout_toEndOf="@+id/item_date_icon"
+                        android:textSize="10sp"
+                        tools:ignore="SmallSp"
+                        android:textColor="@color/primary"
+                        android:layout_marginStart="2dp"
+                        />
+                    <TextView
+                        android:id="@+id/item_date_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/item_card_date"
+                        android:layout_toEndOf="@+id/item_date_icon"
+                        android:layout_below="@+id/item_date_title"
+                        android:textSize="13sp"
+                        tools:ignore="SmallSp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="25dp"
+                        />
+                    <ImageView
+                        android:id="@+id/item_date_arrow_down"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/baseline_keyboard_arrow_down_24"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginVertical="8dp"
+                        android:layout_marginStart="6dp"
+                        android:visibility="gone"
+                        android:contentDescription="@string/description"
+                        />
+                    <ImageView
+                        android:id="@+id/item_date_arrow_up"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/baseline_keyboard_arrow_up_24"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginVertical="8dp"
+                        android:layout_marginStart="6dp"
+                        android:contentDescription="@string/description"
+                        />
 
-                </com.google.android.material.textfield.TextInputEditText>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/btn_time"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginBottom="2dp"
-                android:layout_marginStart="5dp"
                 android:layout_marginEnd="20dp"
-                app:boxCornerRadiusBottomEnd="10dp"
-                app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
-                app:boxCornerRadiusTopStart="10dp"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardUseCompatPadding="true"
+                app:contentPadding="2dp"
+                app:contentPaddingLeft="16dp"
+                app:contentPaddingRight="16dp"
                 >
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/date_de_fin"
-                    android:hint="@string/date_de_fin"
-                    android:inputType="date"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
+                    <ImageView
+                        android:id="@+id/item_card_icon"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/baseline_access_time_24"
+                        android:layout_marginEnd="6dp"
+                        android:layout_marginVertical="8dp"
+                        android:contentDescription="@string/description" />
+                    <TextView
+                        android:id="@+id/item_card_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/start_with"
+                        android:layout_toEndOf="@+id/item_card_icon"
+                        android:textSize="10sp"
+                        tools:ignore="SmallSp"
+                        android:textColor="@color/primary"
+                        android:layout_marginStart="2dp"
+                        />
+                    <TextView
+                        android:id="@+id/item_card_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/heur"
+                        android:layout_toEndOf="@+id/item_card_icon"
+                        android:layout_below="@+id/item_card_title"
+                        android:textSize="13sp"
+                        tools:ignore="SmallSp"
+                        android:layout_marginStart="2dp"
+                        />
+                    <ImageView
+                        android:id="@+id/item_card_arrow_down"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/baseline_keyboard_arrow_down_24"
+                        android:layout_toEndOf="@+id/item_card_time"
+                        android:layout_marginVertical="8dp"
+                        android:layout_marginStart="6dp"
+                        android:visibility="gone"
+                        android:contentDescription="@string/description"
+                        />
+                    <ImageView
+                        android:id="@+id/item_card_arrow_up"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/baseline_keyboard_arrow_up_24"
+                        android:layout_toEndOf="@+id/item_card_time"
+                        android:layout_marginVertical="8dp"
+                        android:layout_marginStart="6dp"
+                        android:contentDescription="@string/description"
+                        />
 
-                </com.google.android.material.textfield.TextInputEditText>
-            </com.google.android.material.textfield.TextInputLayout>
+                </RelativeLayout>
+            </androidx.cardview.widget.CardView>
+            <!--           <Button-->
+            <!--               android:id="@+id/dateButton"-->
+            <!--               android:layout_width="wrap_content"-->
+            <!--               android:layout_height="wrap_content"-->
+            <!--               android:text="Select Date"-->
+            <!--               />-->
+            <!--           -->
+            <!--           <Button-->
+            <!--               android:id="@+id/timeButton"-->
+            <!--               android:layout_width="wrap_content"-->
+            <!--               android:layout_height="wrap_content"-->
+            <!--               android:text="Select Time"-->
+            <!--               />-->
         </LinearLayout>
 
         <ProgressBar
