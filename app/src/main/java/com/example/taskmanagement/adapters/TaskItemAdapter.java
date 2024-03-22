@@ -25,14 +25,12 @@ import com.example.taskmanagement.model.Task;
 
 public class TaskItemAdapter extends BaseAdapter{
 
-    private Context context;
-    private LayoutInflater inflater;
-    private List<Task> tasks;
-    private FragmentManager fragmentManager;
-    private FirebaseFirestore db;
+    private final LayoutInflater inflater;
+    private final List<Task> tasks;
+    private final FragmentManager fragmentManager;
+    private final FirebaseFirestore db;
 
     public TaskItemAdapter(Context context, List<Task> tasks, FragmentManager fragmentManager) {
-        this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.tasks = tasks;
         this.fragmentManager = fragmentManager;
@@ -66,8 +64,8 @@ public class TaskItemAdapter extends BaseAdapter{
         Task currentTask =getItem(position);
         String title = currentTask.getTitle();
         String description = currentTask.getDescription();
-        String startDate = currentTask.getStartDate();
-        String endDate = currentTask.getEndDate();
+        String date = currentTask.getDate();
+        String time = currentTask.getTime();
 
         TextView itemTitle = view.findViewById(R.id.item_title);
         itemTitle.setText(title);
@@ -107,10 +105,10 @@ public class TaskItemAdapter extends BaseAdapter{
         } else if (Objects.equals(currentTask.getEtat(), "FINISH")) {
             checkBox.setChecked(true);
         }
-        String date = startDate + " - "+endDate;
+        String dateItem = date + " - "+time;
 
         TextView itemDate = view.findViewById(R.id.item_date);
-        itemDate.setText(date);
+        itemDate.setText(dateItem);
         cardView.setOnClickListener(v -> {
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

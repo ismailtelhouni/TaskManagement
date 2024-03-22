@@ -1,12 +1,14 @@
 package com.example.taskmanagement.fragment.task;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import android.text.TextUtils;
@@ -16,8 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.taskmanagement.R;
@@ -36,22 +41,24 @@ import java.util.Calendar;
 
 import com.example.taskmanagement.model.Task;
 
-public class AddNewTaskFragment extends Fragment {
+public class AddNewTaskFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "AddNewTaskFragment";
     private TextInputEditText titleEditText , descriptionEditText , startDateEditText , endDateEditText;
     private ProgressBar progressBar;
     private FirebaseFirestore db;
-    private DatePickerDialog.OnDateSetListener onDateSetListener , onEndDateSetListener;
-    private String startDate , endDate;
     private ImageButton imageUpload;
     private Uri imageUri;
     private ActivityResultLauncher<String> mGetContent;
     private StorageReference storageReference;
     private FirebaseUser currentUser;
     private FirebaseAuth mAuth;
+    private Calendar calendar;
     private TaskDao taskDao;
     private Button btnSaveTask;
+    private CardView btnDate , btnTime;
+    private TextView textDate,textTime , titleDate , titleTime;
+    private String StringTime;
 
     @Override
     public void onStart() {
@@ -96,63 +103,22 @@ public class AddNewTaskFragment extends Fragment {
 
         titleEditText = view.findViewById(R.id.title);
         descriptionEditText = view.findViewById(R.id.description);
-        startDateEditText = view.findViewById(R.id.date_de_debut);
-        endDateEditText = view.findViewById(R.id.date_de_fin);
         btnSaveTask = view.findViewById(R.id.btn_save_task);
         progressBar = view.findViewById(R.id.progressBar);
         imageUpload = view.findViewById(R.id.image_upload);
+        btnDate = view.findViewById(R.id.btn_date);
+        btnTime = view.findViewById(R.id.btn_time);
+        textDate = view.findViewById(R.id.item_date_time);
+        textTime = view.findViewById(R.id.item_card_time);
+        titleDate = view.findViewById(R.id.item_date_title);
+        titleTime = view.findViewById(R.id.item_card_title);
 
-        startDateEditText.setOnClickListener(view1 -> {
-
-            Calendar cal = Calendar.getInstance();
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-
-            DatePickerDialog dialog = new DatePickerDialog(
-                    getActivity(),
-                    androidx.appcompat.R.style.Theme_AppCompat_DayNight_Dialog,
-                    onDateSetListener,
-                    year,
-                    month,
-                    day
-            );
-            dialog.getWindow();
-            dialog.show();
-        });
-        endDateEditText.setOnClickListener(view12 -> {
-
-            Calendar cal = Calendar.getInstance();
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
-
-            DatePickerDialog dialog = new DatePickerDialog(
-                    getActivity(),
-                    androidx.appcompat.R.style.Theme_AppCompat_DayNight_Dialog_Alert,
-                    onEndDateSetListener,
-                    year,
-                    month,
-                    day
-            );
-            dialog.getWindow();
-            dialog.show();
-        });
-        onDateSetListener = (datePicker, year, month, day) -> {
-            month = month + 1;
-            Log.d(TAG, "onDateSet : mm/dd/yyyy " + month + "/" + day + "/" + year);
-
-            startDate = month + "/" + day + "/" + year;
-            startDateEditText.setText(startDate);
-        };
-        onEndDateSetListener = (datePicker, year, month, day) -> {
-            month = month + 1;
-            Log.d(TAG, "onDateSet : mm/dd/yyyy " + month + "/" + day + "/" + year);
-
-            endDate = month + "/" + day + "/" + year;
-            endDateEditText.setText(endDate);
-        };
         imageUpload.setOnClickListener(v -> openFileChooser());
+
+        calendar = Calendar.getInstance();
+
+        btnDate.setOnClickListener(this);
+        btnTime.setOnClickListener(this);
 
 
         btnSaveTask.setOnClickListener(v -> {
@@ -161,10 +127,8 @@ public class AddNewTaskFragment extends Fragment {
             Task task = new Task();
             task.setTitle(String.valueOf(titleEditText.getText()));
             task.setDescription(String.valueOf(descriptionEditText.getText()));
-            task.setStartDate(String.valueOf(startDateEditText.getText()));
-            task.setEndDate(String.valueOf(endDateEditText.getText()));
-            startDate = String.valueOf(startDateEditText.getText());
-            endDate = String.valueOf(endDateEditText.getText());
+            task.setDate(String.valueOf(textDate.getText()));
+            task.setTime(String.valueOf(StringTime));
 
             if (TextUtils.isEmpty(task.getTitle())) {
 
@@ -172,22 +136,19 @@ public class AddNewTaskFragment extends Fragment {
                 Toast.makeText(getActivity(), "Enter title", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             if (TextUtils.isEmpty(task.getDescription())) {
 
                 hideDialog();
                 Toast.makeText(getActivity(), "Enter description", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            if (TextUtils.isEmpty(startDate)) {
+            if (TextUtils.isEmpty(task.getDate())) {
 
                 hideDialog();
                 Toast.makeText(getActivity(), "Enter start date", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            if (TextUtils.isEmpty(endDate)) {
+            if (TextUtils.isEmpty(task.getTime())) {
 
                 hideDialog();
                 Toast.makeText(getActivity(), "Enter end date", Toast.LENGTH_SHORT).show();
@@ -199,6 +160,7 @@ public class AddNewTaskFragment extends Fragment {
         return view;
     }
     private void uploadImage(Task task ) {
+        Log.d(TAG , "time :"+task.getTime());
         if(imageUri !=null){
 
             StorageReference reference = storageReference.child(System.currentTimeMillis()+"."+ Utils.getFileExtension( imageUri , requireActivity().getContentResolver() ));
@@ -231,7 +193,6 @@ public class AddNewTaskFragment extends Fragment {
             hideDialog();
         }
     }
-
     private void openFileChooser() {
 
         mGetContent.launch("image/*");
@@ -244,5 +205,59 @@ public class AddNewTaskFragment extends Fragment {
     public void hideDialog(){
         progressBar.setVisibility(View.GONE);
         btnSaveTask.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onClick(View view) {
+
+        if(view.getId() == R.id.btn_date){
+
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                    new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                            textDate.setText(dayOfMonth + "." + (month + 1) + "." + year);
+                        }
+                    }, year, month, dayOfMonth);
+
+            datePickerDialog.show();
+
+        } else if ( view.getId()==R.id.btn_time ) {
+
+            int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+            int minute = calendar.get(Calendar.MINUTE);
+
+//            TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
+//                    new TimePickerDialog.OnTimeSetListener() {
+//                        @Override
+//                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+//
+//                            String hourString = String.valueOf(hourOfDay);
+//                            String minuteString = String.valueOf(minute);
+//                            if (hourOfDay < 10) {
+//                                hourString = "0" + hourString;
+//                            }
+//                            if (minute < 10) {
+//                                minuteString = "0" + minuteString;
+//                            }
+//                            textTime.setText(hourString + ":" + minuteString);
+//
+//                            StringTime = hourString + ":" + minuteString;
+//                            Log.d(TAG , "timesdddddddd :"+StringTime);
+//
+//
+//                        }
+//                    }, hourOfDay, minute, true);
+            TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
+                    (view12, hourOfDay1, minute1) -> textTime.setText(hourOfDay1 + ":" + minute1), hourOfDay, minute, true);
+
+            timePickerDialog.show();
+
+        }
+
     }
 }

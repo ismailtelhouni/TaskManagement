@@ -104,16 +104,16 @@ public class HomeFragment extends Fragment {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String title = document.getString("title");
                             String description = document.getString("description");
-                            String startDate = document.getString("startDate");
-                            String endDate = document.getString("endDate");
+                            String date = document.getString("date");
+                            String time = document.getString("time");
 
                             String etat = document.getString("etat");
                             Task task1 = new Task();
                             task1.setId(document.getId());
                             task1.setTitle(title);
                             task1.setDescription(description);
-                            task1.setStartDate(startDate);
-                            task1.setEndDate(endDate);
+                            task1.setDate(date);
+                            task1.setTime(time);
                             task1.setDoc_url(document.getString("doc_url"));
                             task1.setImg(document.getString("img"));
 

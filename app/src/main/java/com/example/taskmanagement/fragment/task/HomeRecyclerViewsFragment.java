@@ -3,6 +3,7 @@ package com.example.taskmanagement.fragment.task;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.LinkedList;
+import java.util.Objects;
 
 import com.example.taskmanagement.model.Task;
 
@@ -116,7 +118,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapter myAdapter = new MyAdapter(tasks,getContext(),getActivity().getSupportFragmentManager());
+                MyAdapter myAdapter = new MyAdapter(tasks,getContext(),requireActivity().getSupportFragmentManager());
                 myRecycler.setAdapter(myAdapter);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

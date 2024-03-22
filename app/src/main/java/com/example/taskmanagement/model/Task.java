@@ -4,8 +4,8 @@ public class Task {
     private String id ;
     private String title;
     private String description;
-    private String startDate;
-    private String endDate;
+    private String date;
+    private String time;
     private String etat;
     private String doc_url;
     private String img;
@@ -13,12 +13,12 @@ public class Task {
     public Task() {
     }
 
-    public Task(String id, String title, String description, String startDate, String endDate, String etat, String doc_url, String img) {
+    public Task(String id, String title, String description, String date, String time, String etat, String doc_url, String img) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.date = date;
+        this.time = time;
         this.etat = etat;
         this.doc_url = doc_url;
         this.img = img;
@@ -48,20 +48,20 @@ public class Task {
         this.description = description;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public String getDate() {
+        return date;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public String getEndDate() {
-        return endDate;
+    public String getTime() {
+        return time;
     }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+    public void setTime(String endDate) {
+        this.time = time;
     }
 
     public String getEtat() {
@@ -78,8 +78,8 @@ public class Task {
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", startDate='" + startDate + '\'' +
-                ", endDate='" + endDate + '\'' +
+                ", date='" + date + '\'' +
+                ", time='" + time + '\'' +
                 ", etat='" + etat + '\'' +
                 ", doc_url='" + doc_url + '\'' +
                 ", img='" + img + '\'' +

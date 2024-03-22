@@ -40,7 +40,7 @@ public class TaskDao {
         this.context=context;
         this.fragmentManager=fragmentManager;
     }
-        public void getTasks( OnTasksFetchListener listener) {
+    public void getTasks( OnTasksFetchListener listener) {
 
         LinkedList<Task> tasks = new LinkedList<>();
 
@@ -54,16 +54,16 @@ public class TaskDao {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String title = document.getString("title");
                             String description = document.getString("description");
-                            String startDate = document.getString("startDate");
-                            String endDate = document.getString("endDate");
+                            String date = document.getString("date");
+                            String time = document.getString("time");
 
                             String etat = document.getString("etat");
                             Task task1 = new Task();
                             task1.setId(document.getId());
                             task1.setTitle(title);
                             task1.setDescription(description);
-                            task1.setStartDate(startDate);
-                            task1.setEndDate(endDate);
+                            task1.setDate(date);
+                            task1.setTime(time);
                             task1.setDoc_url(document.getString("doc_url"));
                             task1.setImg(document.getString("img"));
                             task1.setEtat(etat);
@@ -83,10 +83,12 @@ public class TaskDao {
 
         Map<String, Object> task = new HashMap<>();
 
+        Log.d(TAG , "time :"+taskModel.getTime());
+
         task.put("title",taskModel.getTitle());
         task.put("description",taskModel.getDescription());
-        task.put("endDate",taskModel.getEndDate());
-        task.put("startDate",taskModel.getStartDate());
+        task.put("date",taskModel.getDate());
+        task.put("time",taskModel.getTime());
         task.put("img",taskModel.getImg());
         task.put("doc_url",taskModel.getDoc_url());
         task.put("etat","EN_ATENTE");
@@ -113,8 +115,8 @@ public class TaskDao {
             Map<String, Object> task = new HashMap<>();
             task.put("title",taskModel.getTitle());
             task.put("description",taskModel.getDescription());
-            task.put("endDate",taskModel.getEndDate());
-            task.put("startDate",taskModel.getStartDate());
+            task.put("date",taskModel.getDate());
+            task.put("time",taskModel.getTime());
             task.put("img",taskModel.getImg());
             task.put("doc_url",taskModel.getDoc_url());
             task.put("etat",taskModel.getEtat());
@@ -160,8 +162,8 @@ public class TaskDao {
                     taskItem.setId(taskId);
                     taskItem.setTitle(document.getString("title"));
                     taskItem.setDescription(document.getString("description"));
-                    taskItem.setStartDate(document.getString("startDate"));
-                    taskItem.setEndDate(document.getString("endDate"));
+                    taskItem.setDate(document.getString("date"));
+                    taskItem.setTime(document.getString("time"));
                     taskItem.setEtat(document.getString("etat"));
                     taskItem.setDoc_url(document.getString("doc_url"));
                     taskItem.setImg(document.getString("img"));
