@@ -57,7 +57,7 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
     private TaskDao taskDao;
     private Button btnSaveTask;
     private CardView btnDate , btnTime;
-    private TextView textDate,textTime , titleDate , titleTime;
+    private TextView textDate,textTime ;
     private String StringTime;
 
     @Override
@@ -84,7 +84,6 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
                     Picasso
                         .with(getContext())
                         .load(imageUri)
-                        .transform(new BorderTransformation(R.color.black, 1, 20))
                         .into(imageUpload);
                 }
             });
@@ -110,8 +109,6 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
         btnTime = view.findViewById(R.id.btn_time);
         textDate = view.findViewById(R.id.item_date_time);
         textTime = view.findViewById(R.id.item_card_time);
-        titleDate = view.findViewById(R.id.item_date_title);
-        titleTime = view.findViewById(R.id.item_card_title);
 
         imageUpload.setOnClickListener(v -> openFileChooser());
 
@@ -119,60 +116,22 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
 
         btnDate.setOnClickListener(this);
         btnTime.setOnClickListener(this);
-
-
-        btnSaveTask.setOnClickListener(v -> {
-
-            showDialog();
-            Task task = new Task();
-            task.setTitle(String.valueOf(titleEditText.getText()));
-            task.setDescription(String.valueOf(descriptionEditText.getText()));
-            task.setDate(String.valueOf(textDate.getText()));
-            task.setTime(String.valueOf(StringTime));
-
-            if (TextUtils.isEmpty(task.getTitle())) {
-
-                hideDialog();
-                Toast.makeText(getActivity(), "Enter title", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (TextUtils.isEmpty(task.getDescription())) {
-
-                hideDialog();
-                Toast.makeText(getActivity(), "Enter description", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (TextUtils.isEmpty(task.getDate())) {
-
-                hideDialog();
-                Toast.makeText(getActivity(), "Enter start date", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (TextUtils.isEmpty(task.getTime())) {
-
-                hideDialog();
-                Toast.makeText(getActivity(), "Enter end date", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            uploadImage( task );
-        });
+        btnSaveTask.setOnClickListener(this);
 
         return view;
     }
     private void uploadImage(Task task ) {
-        Log.d(TAG , "time :"+task.getTime());
         if(imageUri !=null){
-
             StorageReference reference = storageReference.child(System.currentTimeMillis()+"."+ Utils.getFileExtension( imageUri , requireActivity().getContentResolver() ));
             reference.putFile(imageUri)
                     .addOnSuccessListener(taskSnapshot -> {
-                        // L'image a été téléchargée avec succès
-                        // Maintenant, obtenir l'URL de téléchargement
+
                         reference.getDownloadUrl().addOnSuccessListener(uri -> {
                             // Obtenez l'URL de téléchargement avec succès
                             String urlImage = uri.toString();
                             // Mettez à jour l'URL de l'image dans l'objet Task
                             task.setImg(urlImage);
+                            Log.d(TAG , "timedvysvsdv :"+task.getTime());
                             // Ajouter la nouvelle tâche avec l'image à la base de données
                             taskDao.save( task ,this);
                         }).addOnFailureListener(e -> {
@@ -231,32 +190,53 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
             int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
             int minute = calendar.get(Calendar.MINUTE);
 
-//            TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
-//                    new TimePickerDialog.OnTimeSetListener() {
-//                        @Override
-//                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-//
-//                            String hourString = String.valueOf(hourOfDay);
-//                            String minuteString = String.valueOf(minute);
-//                            if (hourOfDay < 10) {
-//                                hourString = "0" + hourString;
-//                            }
-//                            if (minute < 10) {
-//                                minuteString = "0" + minuteString;
-//                            }
-//                            textTime.setText(hourString + ":" + minuteString);
-//
-//                            StringTime = hourString + ":" + minuteString;
-//                            Log.d(TAG , "timesdddddddd :"+StringTime);
-//
-//
-//                        }
-//                    }, hourOfDay, minute, true);
             TimePickerDialog timePickerDialog = new TimePickerDialog(getContext(),
-                    (view12, hourOfDay1, minute1) -> textTime.setText(hourOfDay1 + ":" + minute1), hourOfDay, minute, true);
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
+                        textTime.setText(hourOfDay + ":" + minute);
+
+                        StringTime = hourOfDay + ":" + minute;
+                        Log.d(TAG , "timesdddddddd :"+StringTime);
+
+                    }
+                }, hourOfDay, minute, true);
             timePickerDialog.show();
+        } else if (view.getId()==R.id.btn_save_task) {
+            showDialog();
+            Task taskItem = new Task();
+            taskItem.setTitle(String.valueOf(titleEditText.getText()));
+            taskItem.setDescription(String.valueOf(descriptionEditText.getText()));
+            taskItem.setDate(String.valueOf(textDate.getText()));
+            taskItem.setTime((String) textTime.getText());
 
+            if (TextUtils.isEmpty(taskItem.getTitle())) {
+
+                hideDialog();
+                Toast.makeText(getActivity(), "Enter title", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (TextUtils.isEmpty(taskItem.getDescription())) {
+
+                hideDialog();
+                Toast.makeText(getActivity(), "Enter description", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (TextUtils.isEmpty(taskItem.getDate())) {
+
+                hideDialog();
+                Toast.makeText(getActivity(), "Enter start date", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Log.d(TAG,"timmmmmmmmme :" +textTime.getText());
+            if (TextUtils.isEmpty(taskItem.getTime())) {
+
+                hideDialog();
+                Toast.makeText(getActivity(), "Enter time", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            uploadImage( taskItem );
         }
 
     }

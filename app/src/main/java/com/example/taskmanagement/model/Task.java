@@ -60,7 +60,7 @@ public class Task {
         return time;
     }
 
-    public void setTime(String endDate) {
+    public void setTime(String time) {
         this.time = time;
     }
 

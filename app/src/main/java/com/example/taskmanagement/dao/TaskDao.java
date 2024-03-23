@@ -43,11 +43,11 @@ public class TaskDao {
     public void getTasks( OnTasksFetchListener listener) {
 
         LinkedList<Task> tasks = new LinkedList<>();
-
-        CollectionReference userTasksRef = db.collection("user").document(currentUser.getEmail()).collection("tasks");
-
-        userTasksRef
-                .orderBy("startDate", Query.Direction.ASCENDING)
+        String email = currentUser.getEmail();
+        if(email!=null){
+            CollectionReference userTasksRef = db.collection("user").document(email).collection("tasks");
+            userTasksRef
+                .orderBy("date", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener((OnCompleteListener<QuerySnapshot>) task -> {
                     if (task.isSuccessful()) {
@@ -78,12 +78,13 @@ public class TaskDao {
                         listener.onTasksFetchFailure(task.getException());
                     }
                 });
+        }
     }
     public void save(Task taskModel , AddNewTaskFragment fragment){
 
         Map<String, Object> task = new HashMap<>();
 
-        Log.d(TAG , "time :"+taskModel.getTime());
+        Log.d(TAG , "timedvysvsdv :"+taskModel.getTime());
 
         task.put("title",taskModel.getTitle());
         task.put("description",taskModel.getDescription());
