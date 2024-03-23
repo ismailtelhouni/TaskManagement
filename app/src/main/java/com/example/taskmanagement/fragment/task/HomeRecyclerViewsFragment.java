@@ -118,7 +118,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapter myAdapter = new MyAdapter(tasks,getContext(),requireActivity().getSupportFragmentManager());
+                MyAdapter myAdapter = new MyAdapter(tasks,getContext(), requireActivity().getSupportFragmentManager());
                 myRecycler.setAdapter(myAdapter);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
