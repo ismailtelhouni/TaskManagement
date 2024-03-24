@@ -44,6 +44,11 @@
     <string name="heur">00:00 PM</string>
     <string name="select_a_day">Select a day</string>
     <string name="item_card_date">27.09.2024</string>
+    <string name="ismail_telhouni">Ismail telhouni</string>
+    <string name="ismailtelhouni123_gmail_com">ismailtelhouni123@gmail.com</string>
+    <string name="informaiton">Informaiton</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="change_password">Change Password</string>
     <string-array name="task_etats">
         <item>finish</item>
         <item>pending</item>
