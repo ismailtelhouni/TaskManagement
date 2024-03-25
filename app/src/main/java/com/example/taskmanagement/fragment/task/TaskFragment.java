@@ -47,10 +47,8 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     private FirebaseFirestore db;
     private ImageView taskItemDone , taskItemPending , taskItemImg;
     private Spinner spinner;
-    private Button taskItemEdit,taskItemDelete;
     private ProgressBar progressBar;
     private LinearLayout taskItemVisibility;
-    private FirebaseUser currentUser;
     private FirebaseAuth mAuth;
     private TaskDao taskDao;
 
@@ -170,8 +168,8 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
         taskItemPending = view.findViewById(R.id.task_item_pending);
         taskItemDone = view.findViewById(R.id.task_item_done);
         spinner = view.findViewById(R.id.task_item_spinner);
-        taskItemEdit = view.findViewById(R.id.task_item_edit);
-        taskItemDelete = view.findViewById(R.id.task_item_delete);
+        Button taskItemEdit = view.findViewById(R.id.task_item_edit);
+        Button taskItemDelete = view.findViewById(R.id.task_item_delete);
         taskItemImg = view.findViewById(R.id.task_item_img);
         progressBar = view.findViewById(R.id.progressBar);
         taskItemVisibility = view.findViewById(R.id.task_item_visibility);
@@ -183,9 +181,9 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
 
         taskItemDelete.setOnClickListener(this);
 
-        currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        Log.d(TAG,"user :"+currentUser.toString());
+        Log.d(TAG,"user :"+ currentUser.toString());
 
         showDialog();
         fetchDataAndProcess();
