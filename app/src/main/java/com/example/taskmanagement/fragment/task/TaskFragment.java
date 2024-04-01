@@ -16,17 +16,20 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.dao.TaskDao;
+import com.example.taskmanagement.shared.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import com.example.taskmanagement.model.Task;
 
@@ -48,7 +51,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     private ImageView taskItemDone , taskItemPending , taskItemImg;
     private Spinner spinner;
     private ProgressBar progressBar;
-    private LinearLayout taskItemVisibility;
+    private RelativeLayout taskItemVisibility;
     private FirebaseAuth mAuth;
     private TaskDao taskDao;
 
@@ -95,7 +98,8 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
                         .load(task.getImg())
                         .into(taskItemImg);
 
-                String date = task.getDate()+" - "+task.getTime();
+                String string = Utils.getDaysUntilDate(task.getDate());
+                String date = string+" - "+task.getTime();
                 taskItemDate.setText(date);
 
                 String[] etatsArray = getResources().getStringArray(R.array.task_etats);
@@ -131,20 +135,24 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
 
                             taskItemDone.setVisibility(View.VISIBLE);
                             taskItemPending.setVisibility(View.GONE);
-
-                            db.collection("tasks").document(task_id)
-                                .update("etat","FINISH")
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
-                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                            String email = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                            if(email!=null){
+                                db.collection("user").document(email).collection("tasks").document(task_id)
+                                    .update("etat","FINISH")
+                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                            }
                         }else{
 
                             taskItemDone.setVisibility(View.GONE);
                             taskItemPending.setVisibility(View.VISIBLE);
-
-                            db.collection("tasks").document(task_id)
-                                .update("etat","EN_COUR")
-                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
-                                .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                            String email = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                            if(email!=null){
+                                db.collection("user").document(email).collection("tasks").document(task_id)
+                                    .update("etat","EN_COUR")
+                                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
+                                    .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
+                            }
                         }
                     }
                     @Override

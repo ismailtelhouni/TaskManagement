@@ -2,16 +2,29 @@ package com.example.taskmanagement.dao;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import com.example.taskmanagement.R;
+import com.example.taskmanagement.fragment.EditeProfileFragment;
+import com.example.taskmanagement.fragment.SettingsFragment;
+import com.example.taskmanagement.fragment.task.TaskFragment;
 import com.example.taskmanagement.model.Task;
 import com.example.taskmanagement.model.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserDao {
 
@@ -42,6 +55,7 @@ public class UserDao {
                         user.setName(document.getString("prenom"));
                         user.setLastName(document.getString("nom"));
                         user.setTel(document.getString("tel"));
+                        user.setAvatar(document.getString("avatar"));
 
                         listener.onUserFetchSuccess(user);
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
@@ -54,6 +68,37 @@ public class UserDao {
                 }
             });
         }
+    }
+
+    public void save(User userItem, EditeProfileFragment editeProfileFragment) {
+
+    }
+
+    public void update( User userItem , EditeProfileFragment editeProfileFragment ) {
+
+        Map<String, Object> user = new HashMap<>();
+        user.put("nom", userItem.getName());
+        user.put("prenom", userItem.getLastName());
+        user.put("tel", userItem.getTel());
+        if(userItem.getAvatar()!=null){
+            user.put("avatar",userItem.getAvatar());
+        }
+
+        DocumentReference userRef = db.collection("user").document(currentUser.getEmail());
+        userRef.update(user)
+                .addOnSuccessListener(unused -> {
+                    editeProfileFragment.hideDialog();
+                    Toast.makeText(context, "Edit User Success.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "DocumentSnapshot successfully written!");
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, new SettingsFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error writing document", e);
+                });
+
     }
 
     public interface OnUserFetchListener {
