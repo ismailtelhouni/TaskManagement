@@ -67,12 +67,9 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
 
         Log.d(TAG,"user :"+currentUser.toString());
     }
-
     public AddNewTaskFragment() {
 
     }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,28 +121,28 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
         if(imageUri !=null){
             StorageReference reference = storageReference.child(System.currentTimeMillis()+"."+ Utils.getFileExtension( imageUri , requireActivity().getContentResolver() ));
             reference.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
+                .addOnSuccessListener(taskSnapshot -> {
 
-                        reference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            // Obtenez l'URL de téléchargement avec succès
-                            String urlImage = uri.toString();
-                            // Mettez à jour l'URL de l'image dans l'objet Task
-                            task.setImg(urlImage);
-                            Log.d(TAG , "timedvysvsdv :"+task.getTime());
-                            // Ajouter la nouvelle tâche avec l'image à la base de données
-                            taskDao.save( task ,this);
-                        }).addOnFailureListener(e -> {
-                            // Échec de l'obtention de l'URL de téléchargement
-                            Toast.makeText(getContext(), "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            hideDialog();
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        // Échec du téléchargement de l'image
-                        Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        Log.e(TAG , "Upload failed: " + e.getMessage());
+                    reference.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // Obtenez l'URL de téléchargement avec succès
+                        String urlImage = uri.toString();
+                        // Mettez à jour l'URL de l'image dans l'objet Task
+                        task.setImg(urlImage);
+                        Log.d(TAG , "timedvysvsdv :"+task.getTime());
+                        // Ajouter la nouvelle tâche avec l'image à la base de données
+                        taskDao.save( task ,this);
+                    }).addOnFailureListener(e -> {
+                        // Échec de l'obtention de l'URL de téléchargement
+                        Toast.makeText(getContext(), "Failed to get download URL: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         hideDialog();
                     });
+                })
+                .addOnFailureListener(e -> {
+                    // Échec du téléchargement de l'image
+                    Toast.makeText(getContext(), "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG , "Upload failed: " + e.getMessage());
+                    hideDialog();
+                });
 
         }else{
             Toast.makeText(getContext(), "No file selected", Toast.LENGTH_SHORT).show();
@@ -153,9 +150,7 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
         }
     }
     private void openFileChooser() {
-
         mGetContent.launch("image/*");
-
     }
     public void showDialog(){
         progressBar.setVisibility(View.VISIBLE);

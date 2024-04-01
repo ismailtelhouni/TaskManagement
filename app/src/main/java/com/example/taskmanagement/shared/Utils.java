@@ -67,4 +67,30 @@ public class Utils {
             return "Date invalide";
         }
     }
+    public static String getDaysUntilDate( String dateString ){
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            Date date = dateFormat.parse( dateString );
+            Date today = new Date();
+
+            long differenceInMillis = date.getTime() - today.getTime();
+            long differenceInDays = differenceInMillis / (1000 * 60 * 60 * 24);
+
+            if ( differenceInDays >= 30 ) {
+                long months = differenceInDays / 30;
+                return "Remains " + months + " months";
+            } else if ( differenceInDays > 1) {
+                return "Remains " + differenceInDays + " days";
+            } else if (differenceInDays == 1) {
+                return "Remains 1 day";
+            } else if (differenceInDays == 0) {
+                return "Remains today";
+            } else {
+                return "Ended";
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "Date invalide";
+        }
+    }
 }

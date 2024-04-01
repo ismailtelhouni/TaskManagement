@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.taskmanagement.R;
@@ -21,6 +22,7 @@ import com.example.taskmanagement.model.User;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
@@ -31,6 +33,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     private ShapeableImageView avatar;
     private static final String TAG = "SettingsFragment";
+    private RelativeLayout progressBar , itemVisibility ;
     private TextView userName,email;
     private CardView editeProfile , information ,changePassword ,logOut;
     private UserDao userDao;
@@ -50,6 +53,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     }
     private void fetchDataAndProcess(){
+        showDialog();
         userDao.getCurrentUser(new UserDao.OnUserFetchListener() {
             @Override
             public void onUserFetchSuccess(User user) {
@@ -58,6 +62,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 userName.setText(name);
 
                 email.setText(user.getId());
+                if( user.getAvatar() != null ){
+
+                    Picasso.with(getContext())
+                        .load(user.getAvatar())
+                        .into(avatar);
+
+                }
+                hideDialog();
 
             }
             @Override
@@ -80,6 +92,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         information = view.findViewById(R.id.card_information);
         changePassword = view.findViewById(R.id.card_change_password);
         logOut = view.findViewById(R.id.card_log_out);
+        progressBar     = view.findViewById(R.id.progressBar);
+        itemVisibility  = view.findViewById(R.id.item_visibility);
 
         editeProfile.setOnClickListener(this);
         information.setOnClickListener(this);
@@ -128,5 +142,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             startActivity(intent);
         }
 
+    }
+    public void showDialog(){
+        progressBar.setVisibility(View.VISIBLE);
+        itemVisibility.setVisibility(View.GONE);
+    }
+    public void hideDialog(){
+        progressBar.setVisibility(View.GONE);
+        itemVisibility.setVisibility(View.VISIBLE);
     }
 }
