@@ -229,6 +229,7 @@ public class EditeProfileFragment extends Fragment implements View.OnClickListen
                     });
             }
         } else{
+            userDao.update( userItem ,this);
             Toast.makeText(getContext(), "No file selected", Toast.LENGTH_SHORT).show();
         }
     }
