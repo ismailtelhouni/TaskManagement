@@ -49,6 +49,12 @@
     <string name="informaiton">Informaiton</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="change_password">Change Password</string>
+    <string name="about_our_app">About Our App</string>
+    <string name="data">This is a brief description of our application. You can provide information about its purpose, features, etc.</string>
+    <string name="item_change_password">Change Password :</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="forget_your_password">Forget your password</string>
     <string-array name="task_etats">
         <item>finish</item>
         <item>pending</item>

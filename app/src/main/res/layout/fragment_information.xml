@@ -5,10 +5,32 @@
     android:layout_height="match_parent"
     tools:context=".fragment.InformationFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!-- fragment_about.xml -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/text_about_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/about_our_app"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/text_about_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/data"
+            android:textSize="16sp"/>
+
+        <!-- You can add more TextViews or other views to display additional information -->
+
+    </LinearLayout>
+
 
 </FrameLayout>
