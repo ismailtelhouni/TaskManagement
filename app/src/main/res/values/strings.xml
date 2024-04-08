@@ -54,7 +54,7 @@
     <string name="item_change_password">Change Password :</string>
     <string name="new_password">New Password</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="forget_your_password">Forget your password</string>
+    <string name="forget_your_password">Forget password ?</string>
     <string-array name="task_etats">
         <item>finish</item>
         <item>pending</item>

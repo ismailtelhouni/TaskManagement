@@ -18,13 +18,13 @@ import android.widget.TextView;
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.activity.AuthActivity;
 import com.example.taskmanagement.dao.UserDao;
+import com.example.taskmanagement.fragment.user.ChangePasswordFragment;
+import com.example.taskmanagement.fragment.user.EditeProfileFragment;
 import com.example.taskmanagement.model.User;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
-
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
