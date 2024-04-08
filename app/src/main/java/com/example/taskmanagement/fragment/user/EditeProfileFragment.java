@@ -1,4 +1,4 @@
-package com.example.taskmanagement.fragment;
+package com.example.taskmanagement.fragment.user;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,7 +7,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +23,10 @@ import com.example.taskmanagement.shared.Utils;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
-
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,23 +37,11 @@ public class EditeProfileFragment extends Fragment implements View.OnClickListen
     private static final String TAG = "EditeProfileFragment" ;
     private RelativeLayout progressBar , itemVisibility ;
     private ShapeableImageView imageAvatar ;
-    private TextView upload ;
     private TextInputEditText nameEditText , lastNameEditText , phoneEditText , emailEditText ;
-    private Button btnSave ;
-    private FirebaseFirestore db;
     private Uri imageUri;
     private ActivityResultLauncher<String> mGetContent;
     private StorageReference storageReference;
-    private FirebaseUser currentUser;
-    private FirebaseAuth mAuth;
     private UserDao userDao;
-    @Override
-    public void onStart() {
-        super.onStart();
-        currentUser = mAuth.getCurrentUser();
-
-        Log.d(TAG,"user :"+currentUser.toString());
-    }
     public EditeProfileFragment() {
         // Required empty public constructor
     }
@@ -75,10 +59,10 @@ public class EditeProfileFragment extends Fragment implements View.OnClickListen
                         .into(imageAvatar);
                 }
             });
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("users");
-        userDao = new UserDao( db , mAuth , getContext() , requireActivity().getSupportFragmentManager() );
+        userDao = new UserDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() );
 
     }
     @Override
@@ -90,12 +74,12 @@ public class EditeProfileFragment extends Fragment implements View.OnClickListen
         progressBar     = view.findViewById(R.id.progressBar);
         itemVisibility  = view.findViewById(R.id.item_visibility);
         imageAvatar     = view.findViewById(R.id.image_avatar);
-        upload          = view.findViewById(R.id.btn_upload);
+        TextView upload = view.findViewById(R.id.btn_upload);
         nameEditText    = view.findViewById(R.id.name);
         lastNameEditText= view.findViewById(R.id.lastName);
         phoneEditText   = view.findViewById(R.id.tel);
         emailEditText   = view.findViewById(R.id.email);
-        btnSave         = view.findViewById(R.id.btn_save_user);
+        Button btnSave = view.findViewById(R.id.btn_save_user);
 
         btnSave.setOnClickListener(this);
         upload.setOnClickListener(this);

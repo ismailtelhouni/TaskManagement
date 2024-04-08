@@ -4,21 +4,15 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.taskmanagement.R;
-import com.example.taskmanagement.fragment.EditeProfileFragment;
+import com.example.taskmanagement.fragment.user.EditeProfileFragment;
 import com.example.taskmanagement.fragment.SettingsFragment;
-import com.example.taskmanagement.fragment.task.TaskFragment;
-import com.example.taskmanagement.model.Task;
 import com.example.taskmanagement.model.User;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
