@@ -2,6 +2,7 @@ package com.example.taskmanagement.activity;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,11 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.fragment.user.ForgetPasswordFragment;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class AuthActivity extends AppCompatActivity implements View.OnClickListener {
+public class AuthActivity extends AppCompatActivity implements View.OnClickListener , ForgetPasswordFragment.OnNavigateToForgetPasswordListener {
 
     TextInputEditText editTextEmail , editTextPassword ;
     Button buttonLogin ;
@@ -48,10 +50,6 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(intent);
             finish();
             
-        }else{
-            
-            
-            
         }
         
     }
@@ -67,11 +65,13 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
         buttonLogin = findViewById(R.id.btn_login);
         progressBar = findViewById(R.id.progressBar);
         registerNow = findViewById(R.id.registerNow);
+        TextView forgetYourPassword = findViewById(R.id.forget_your_password);
+
+        forgetYourPassword.setOnClickListener(this);
 
         registerNow.setOnClickListener(view -> {
             Intent intent = new Intent(getApplicationContext() , RegisterActivity.class);
             startActivity(intent);
-            finish();
         });
 
         buttonLogin.setOnClickListener(view -> {
@@ -121,6 +121,19 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        if (view.getId()==R.id.forget_your_password) {
 
+            Intent intent = new Intent(AuthActivity.this, ForgetPasswordActivity.class);
+            startActivity(intent);
+
+        }
+    }
+
+    @Override
+    public void navigateToForgetPassword() {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, new ForgetPasswordFragment());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

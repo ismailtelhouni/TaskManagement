@@ -35,22 +35,16 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "SettingsFragment";
     private RelativeLayout progressBar , itemVisibility ;
     private TextView userName,email;
-    private CardView editeProfile , information ,changePassword ,logOut;
     private UserDao userDao;
-    private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
-
     public SettingsFragment() {
         // Required empty public constructor
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-        userDao = new UserDao(db ,mAuth , getContext(), requireActivity().getSupportFragmentManager() );
-
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        userDao = new UserDao(db, mAuth, getContext(), requireActivity().getSupportFragmentManager() );
     }
     private void fetchDataAndProcess(){
         showDialog();
@@ -88,10 +82,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         avatar = view.findViewById(R.id.image_avatar);
         userName = view.findViewById(R.id.user_name);
         email = view.findViewById(R.id.email);
-        editeProfile = view.findViewById(R.id.card_edit_profile);
-        information = view.findViewById(R.id.card_information);
-        changePassword = view.findViewById(R.id.card_change_password);
-        logOut = view.findViewById(R.id.card_log_out);
+        CardView editeProfile = view.findViewById(R.id.card_edit_profile);
+        CardView information = view.findViewById(R.id.card_information);
+        CardView changePassword = view.findViewById(R.id.card_change_password);
+        CardView logOut = view.findViewById(R.id.card_log_out);
         progressBar     = view.findViewById(R.id.progressBar);
         itemVisibility  = view.findViewById(R.id.item_visibility);
 

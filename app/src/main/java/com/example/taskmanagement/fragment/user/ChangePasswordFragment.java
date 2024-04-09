@@ -1,5 +1,6 @@
 package com.example.taskmanagement.fragment.user;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,7 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.activity.AuthActivity;
+import com.example.taskmanagement.activity.ForgetPasswordActivity;
+import com.example.taskmanagement.dao.UserDao;
 import com.example.taskmanagement.fragment.SettingsFragment;
+import com.example.taskmanagement.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -25,6 +30,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
@@ -37,19 +44,46 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
     private ShapeableImageView avatar;
     private static final String TAG = "ChangePasswordFragment";
     private RelativeLayout progressBar , itemVisibility ;
-    private TextView userName , forgetYourPassword ;
+    private TextView userName ;
     private TextInputEditText emailEditText , passwordEditText , confirmPasswordEditText , newPasswordEditText;
-    private Button btnSave;
-    private FirebaseAuth auth ;
     private FirebaseUser currentUser;
+    private UserDao userDao;
     public ChangePasswordFragment() {
         // Required empty public constructor
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        auth = FirebaseAuth.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        userDao = new UserDao(db, auth, getContext(), requireActivity().getSupportFragmentManager() );
+    }
+    private void fetchDataAndProcess(){
+        showDialog();
+        userDao.getCurrentUser(new UserDao.OnUserFetchListener() {
+            @Override
+            public void onUserFetchSuccess(User user) {
+
+                String name = user.getLastName()+" "+user.getName();
+                userName.setText(name);
+
+                emailEditText.setText(user.getId());
+                if( user.getAvatar() != null ){
+
+                    Picasso.with(getContext())
+                        .load(user.getAvatar())
+                        .into(avatar);
+
+                }
+                hideDialog();
+
+            }
+            @Override
+            public void onUserFetchFailure(Exception e) {
+                Log.e(TAG, "Erreur lors de la récupération de utilisateur : ", e);
+            }
+        });
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
@@ -60,16 +94,17 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
         progressBar = view.findViewById(R.id.progressBar);
         itemVisibility = view.findViewById(R.id.item_visibility);
         userName = view.findViewById(R.id.user_name);
-        forgetYourPassword = view.findViewById(R.id.forget_your_password);
+        TextView forgetYourPassword = view.findViewById(R.id.forget_your_password);
         emailEditText = view.findViewById(R.id.email);
         passwordEditText = view.findViewById(R.id.password);
         newPasswordEditText = view.findViewById(R.id.new_password);
         confirmPasswordEditText = view.findViewById(R.id.confirm_password);
-        btnSave = view.findViewById(R.id.btn_save_user);
+        Button btnSave = view.findViewById(R.id.btn_save_user);
 
         btnSave.setOnClickListener(this);
         forgetYourPassword.setOnClickListener(this);
 
+        fetchDataAndProcess();
         return view;
     }
 
@@ -123,10 +158,10 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
 
         }
         else if (view.getId()==R.id.forget_your_password) {
-            FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, new SettingsFragment());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+
+            Intent intent = new Intent( getContext() , ForgetPasswordActivity.class);
+            startActivity(intent);
+
         }
     }
     public void showDialog(){

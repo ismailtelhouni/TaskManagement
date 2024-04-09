@@ -55,6 +55,9 @@
     <string name="new_password">New Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="forget_your_password">Forget password ?</string>
+    <string name="reset_password">Provide your account s email for which you want to reset your password </string>
+    <string name="send">Send</string>
+    <string name="notes">Notes</string>
     <string-array name="task_etats">
         <item>finish</item>
         <item>pending</item>

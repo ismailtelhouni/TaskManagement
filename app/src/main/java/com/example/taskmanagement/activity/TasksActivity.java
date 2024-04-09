@@ -12,9 +12,11 @@ import android.widget.PopupMenu;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.fragment.event.EventsFragment;
+import com.example.taskmanagement.fragment.note.NotesFragment;
 import com.example.taskmanagement.fragment.task.AddNewTaskFragment;
 import com.example.taskmanagement.fragment.task.HomeRecyclerViewsFragment;
 import com.example.taskmanagement.fragment.SettingsFragment;
+import com.example.taskmanagement.fragment.user.ForgetPasswordFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.example.taskmanagement.databinding.ActivityTasksBinding;
@@ -47,6 +49,8 @@ public class TasksActivity extends AppCompatActivity {
                 replaceFragment(new SettingsFragment());
             } else if(itemId == R.id.events){
                 replaceFragment(new EventsFragment());
+            } else if(itemId == R.id.notes ){
+                replaceFragment(new NotesFragment() );
             }
             return true;
         });
@@ -56,6 +60,13 @@ public class TasksActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
+//        if (getIntent().getBooleanExtra("navigate_to_forget_password", false)) {
+//
+//            getSupportFragmentManager().beginTransaction()
+//                .replace(R.id.frame_layout, new ForgetPasswordFragment())
+//                .commit();
+//        }
 
         dropdownButton.setOnClickListener(v->{
             PopupMenu popupMenu = new PopupMenu(TasksActivity.this, dropdownButton);
