@@ -103,7 +103,7 @@ public class EditTaskFragment extends Fragment implements View.OnClickListener {
         }
         Log.d(TAG,"user :"+currentUser.toString());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        taskDao = new TaskDao(db, mAuth,getContext(),getActivity().getSupportFragmentManager());
+        taskDao = new TaskDao(db, mAuth,getContext(),requireActivity().getSupportFragmentManager() , requireActivity().findViewById(R.id.viewPager));
     }
 
     @Override

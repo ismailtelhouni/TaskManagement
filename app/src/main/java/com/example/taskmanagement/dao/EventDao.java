@@ -5,13 +5,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.taskmanagement.R;
+import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.fragment.event.AddEventFragment;
 import com.example.taskmanagement.fragment.event.EventFragment;
 import com.example.taskmanagement.fragment.event.EventsFragment;
-import com.example.taskmanagement.fragment.task.AddNewTaskFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,12 +35,22 @@ public class EventDao {
     private final FirebaseUser currentUser;
     private final Context context;
     private final FragmentManager fragmentManager;
+    private final ViewPager2 viewPager;
+    private final VPAdapter adapter;
 
-    public EventDao(FirebaseFirestore db, FirebaseAuth mAuth, Context context, FragmentManager fragmentManager) {
+    public EventDao(
+            FirebaseFirestore db,
+            FirebaseAuth mAuth,
+            Context context,
+            FragmentManager fragmentManager ,
+            ViewPager2 viewPager
+    ) {
         this.db = db;
         this.currentUser = mAuth.getCurrentUser();
         this.context = context;
         this.fragmentManager = fragmentManager;
+        this.viewPager = viewPager;
+        this.adapter = (VPAdapter) viewPager.getAdapter();
     }
 
     public void getEvents( OnEventsFetchListener listener ) {
@@ -107,10 +116,16 @@ public class EventDao {
 
                     fragment.hideDialog();
                     Log.d(TAG, "DocumentSnapshot successfully written!");
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_layout, new EventsFragment());
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
+//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                    fragmentTransaction.replace(R.id.frame_layout, new EventsFragment());
+//                    fragmentTransaction.addToBackStack(null);
+//                    fragmentTransaction.commit();
+                    EventsFragment eventsFragment = new EventsFragment();
+                    if(adapter!=null){
+                        adapter.addFragment(eventsFragment);
+                        adapter.notifyDataSetChanged();
+                        viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+                    }
 
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
@@ -157,12 +172,8 @@ public class EventDao {
                 .document(eventId);
 
             eventRef.delete()
-                .addOnSuccessListener(aVoid -> {
-                    listener.onEventDeleteSuccess();
-                })
-                .addOnFailureListener(e -> {
-                    listener.onEventDeleteFailure(e);
-                });
+                .addOnSuccessListener(aVoid -> listener.onEventDeleteSuccess())
+                .addOnFailureListener(listener::onEventDeleteFailure);
         }
     }
     public void update( String event_id , Event eventModel ){
@@ -184,10 +195,16 @@ public class EventDao {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "update Event Success.", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "DocumentSnapshot successfully written!");
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance(event_id));
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
+//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                    fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance(event_id));
+//                    fragmentTransaction.addToBackStack(null);
+//                    fragmentTransaction.commit();
+                    EventFragment fragment = EventFragment.newInstance(event_id);
+                    if(adapter!=null){
+                        adapter.addFragment(fragment);
+                        adapter.notifyDataSetChanged();
+                        viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+                    }
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
         }

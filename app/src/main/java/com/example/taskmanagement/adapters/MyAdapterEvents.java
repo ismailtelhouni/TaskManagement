@@ -14,6 +14,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.fragment.event.EventFragment;
@@ -30,18 +31,20 @@ import java.util.LinkedList;
 public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyViewHolder>{
 
     private final LinkedList<Event> events;
-    private Context context;
+    private final Context context;
     private final FirebaseFirestore db;
     private final FirebaseUser currentUser;
-    private FragmentManager fragmentManager;
+    private final FragmentManager fragmentManager;
+    private final ViewPager2 viewPager;
 
-    public MyAdapterEvents(LinkedList<Event> events, Context context, FragmentManager fragmentManager) {
+    public MyAdapterEvents(LinkedList<Event> events, Context context, FragmentManager fragmentManager , ViewPager2 viewPager ) {
         this.events = events;
         this.context = context;
         this.fragmentManager = fragmentManager;
         this.db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         this.currentUser = mAuth.getCurrentUser();
+        this.viewPager = viewPager;
     }
 
     @NonNull
@@ -63,16 +66,21 @@ public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyView
         holder.date.setText(date);
 
         Picasso.with(context)
-                .load(event.getImage())
-                .into(holder.image);
+            .load(event.getImage())
+            .into(holder.image);
 
         holder.card.setOnClickListener(view -> {
-
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance(event.getId()));
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
-
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.replace(R.id.viewPager, EventFragment.newInstance(event.getId()));
+//            fragmentTransaction.addToBackStack(null);
+//            fragmentTransaction.commit();
+            VPAdapter adapter = (VPAdapter) viewPager.getAdapter();
+            EventFragment fragment = EventFragment.newInstance(event.getId());
+            if(adapter!=null){
+                adapter.addFragment(fragment);
+                adapter.notifyDataSetChanged();
+                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+            }
         });
     }
 

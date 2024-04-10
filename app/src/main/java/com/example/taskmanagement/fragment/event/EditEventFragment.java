@@ -85,7 +85,7 @@ public class EditEventFragment extends Fragment implements View.OnClickListener{
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("events");
-        eventDao = new EventDao(db,mAuth,getContext(),getActivity().getSupportFragmentManager());
+        eventDao = new EventDao(db,mAuth,getContext(),requireActivity().getSupportFragmentManager(), requireActivity().findViewById(R.id.viewPager));
 
         if( mAuth.getCurrentUser() != null){
             currentUser = mAuth.getCurrentUser();

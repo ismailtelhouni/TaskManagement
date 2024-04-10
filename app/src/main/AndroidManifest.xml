@@ -15,9 +15,12 @@
         android:theme="@style/Base.Theme.TaskManagement"
         tools:targetApi="31">
         <activity
+            android:name=".activity.ForgetPasswordActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.SplashActivity"
-            android:theme="@style/Base.Theme.TaskManagement"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Base.Theme.TaskManagement">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,7 +44,7 @@
         <activity
             android:name=".activity.AuthActivity"
             android:exported="true"
-            android:theme="@style/Base.Theme.TaskManagement">
-        </activity>
+            android:theme="@style/Base.Theme.TaskManagement"></activity>
     </application>
+
 </manifest>

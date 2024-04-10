@@ -55,7 +55,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         taskList= new LinkedList<Task>();
         currentUser = mAuth.getCurrentUser();
-        taskDao = new TaskDao( db ,mAuth ,getContext(),getActivity().getSupportFragmentManager());
+        taskDao = new TaskDao( db ,mAuth ,getContext(),requireActivity().getSupportFragmentManager() , requireActivity().findViewById(R.id.viewPager));
 
     }
 
@@ -93,7 +93,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                         filtres.add(task);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapter myAdapter = new MyAdapter(filtres,getContext(),getActivity().getSupportFragmentManager());
+                    MyAdapter myAdapter = new MyAdapter(filtres,getContext(),getParentFragmentManager() , requireActivity().findViewById(R.id.viewPager));
 
                     myRecycler.setAdapter(myAdapter);
 
@@ -118,7 +118,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapter myAdapter = new MyAdapter(tasks,getContext(), requireActivity().getSupportFragmentManager());
+                MyAdapter myAdapter = new MyAdapter(tasks,getContext(), getParentFragmentManager(), requireActivity().findViewById(R.id.viewPager));
                 myRecycler.setAdapter(myAdapter);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

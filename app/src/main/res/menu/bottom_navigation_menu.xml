@@ -1,23 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/home"
         android:title="@string/home"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/baseline_home_24"
         />
     <item
         android:id="@+id/add_new_task"
         android:title="@string/add_new_task"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/baseline_add_24"
         />
     <item
         android:id="@+id/events"
         android:title="@string/events"
+        app:showAsAction="ifRoom"
         android:icon="@drawable/baseline_event_24"
         />
     <item
+        android:id="@+id/notes"
+        android:title="@string/notes"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/baseline_notes_24"
+        />
+    <item
         android:id="@+id/settings"
+        app:showAsAction="ifRoom"
         android:title="@string/settings"
         android:icon="@drawable/baseline_settings_24"
         />
