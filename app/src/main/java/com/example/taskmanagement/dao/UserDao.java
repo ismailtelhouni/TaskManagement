@@ -85,7 +85,7 @@ public class UserDao {
                     Toast.makeText(context, "Edit User Success.", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "DocumentSnapshot successfully written!");
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_layout, new SettingsFragment());
+//                    fragmentTransaction.replace(R.id.frame_layout, new SettingsFragment());
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 })

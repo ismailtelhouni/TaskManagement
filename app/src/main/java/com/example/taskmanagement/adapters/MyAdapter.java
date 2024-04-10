@@ -1,6 +1,7 @@
 package com.example.taskmanagement.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,10 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.activity.TasksActivity;
 import com.example.taskmanagement.fragment.task.TaskFragment;
 import com.example.taskmanagement.shared.Utils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,18 +34,16 @@ import com.example.taskmanagement.model.Task;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private static final String TAG = "EventsFragment";
     private final LinkedList<Task> tasks;
-    private Context context;
     private final FirebaseFirestore db;
     private final FirebaseUser currentUser;
-    private FragmentManager fragmentManager;
+    private ViewPager2 viewPager;
 
-    public MyAdapter(LinkedList<Task> tasks, Context context , FragmentManager fragmentManager ) {
+    public MyAdapter(LinkedList<Task> tasks, Context context , FragmentManager fragmentManager , ViewPager2 viewPager ) {
         this.db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         this.currentUser = mAuth.getCurrentUser();
         this.tasks = tasks;
-        this.context = context;
-        this.fragmentManager = fragmentManager;
+        this.viewPager = viewPager;
     }
 
     @NonNull
@@ -104,10 +105,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
         holder.card.setOnClickListener(v -> {
 
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance(task.getId()));
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.replace(R.id.viewPager, TaskFragment.newInstance(task.getId()));
+//            fragmentTransaction.addToBackStack(null);
+//            fragmentTransaction.commit();
+
+            TaskFragment taskFragment = TaskFragment.newInstance(task.getId());
+            VPAdapter adapter = (VPAdapter) viewPager.getAdapter();
+            if(adapter!=null){
+                adapter.addFragment(taskFragment);
+                adapter.notifyDataSetChanged();
+                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+            }
+
         });
 
     }

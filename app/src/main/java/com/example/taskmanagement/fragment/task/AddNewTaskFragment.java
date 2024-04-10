@@ -95,7 +95,7 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("tasks");
-        taskDao = new TaskDao(db,mAuth,getContext(),getActivity().getSupportFragmentManager());
+        taskDao = new TaskDao( db , mAuth , getContext() , getActivity().getSupportFragmentManager() , requireActivity().findViewById( R.id.viewPager ) );
 
         titleEditText = view.findViewById(R.id.title);
         descriptionEditText = view.findViewById(R.id.description);

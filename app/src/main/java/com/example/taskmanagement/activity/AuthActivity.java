@@ -132,7 +132,7 @@ public class AuthActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void navigateToForgetPassword() {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, new ForgetPasswordFragment());
+//        fragmentTransaction.replace(R.id.frame_layout, new ForgetPasswordFragment());
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }

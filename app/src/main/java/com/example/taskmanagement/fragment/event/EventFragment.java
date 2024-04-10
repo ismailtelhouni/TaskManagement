@@ -4,8 +4,7 @@ import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,9 +18,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.dao.EventDao;
-import com.example.taskmanagement.fragment.task.EditTaskFragment;
-import com.example.taskmanagement.fragment.task.HomeRecyclerViewsFragment;
 import com.example.taskmanagement.model.Event;
 import com.example.taskmanagement.shared.Utils;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,28 +35,19 @@ import java.util.Objects;
  * create an instance of this fragment.
  */
 public class EventFragment extends Fragment implements View.OnClickListener {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String EVENT_ID = "1";
     private static final String TAG = "EventFragment";
-
-    // TODO: Rename and change types of parameters
     private String event_id;
     private TextView eventItemTitle , eventItemDate , eventItemDescription , eventItemLieu , eventItemCategory , itemDateRest ;
-    private FirebaseFirestore db ;
     private FirebaseUser currentUser;
     private ImageView eventItemStatus , eventItemImage ;
     private ProgressBar progressBar ;
     private LinearLayout btnLayout ;
     private Event eventItem;
-    private FirebaseAuth mAuth;
+    private ViewPager2 viewPager;
     private EventDao eventDao;
+    private VPAdapter adapter;
     private RelativeLayout itemData;
-
-    public EventFragment() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -67,7 +56,6 @@ public class EventFragment extends Fragment implements View.OnClickListener {
      * @param event_id Parameter 1.
      * @return A new instance of fragment EventFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static EventFragment newInstance( String event_id ) {
         EventFragment fragment = new EventFragment();
         Bundle args = new Bundle();
@@ -82,11 +70,12 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         if (getArguments() != null) {
             event_id = getArguments().getString(EVENT_ID);
         }
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
         currentUser = mAuth.getCurrentUser();
-        eventDao = new EventDao( db , mAuth , getContext() , getActivity().getSupportFragmentManager() );
-
+        viewPager = requireActivity().findViewById(R.id.viewPager);
+        eventDao = new EventDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() , viewPager );
+        adapter = (VPAdapter) viewPager.getAdapter();
     }
     private void fetchDataAndProcess(){
         eventDao.getEvent(event_id, new EventDao.OnEventFetchListener() {
@@ -112,13 +101,13 @@ public class EventFragment extends Fragment implements View.OnClickListener {
                 itemDateRest.setText(dateRest);
 
                 if(Objects.equals(dateRest, "Ended")){
-                    eventItemStatus.setColorFilter(ContextCompat.getColor(getContext(), R.color.color_finish));
+                    eventItemStatus.setColorFilter(ContextCompat.getColor(requireContext(), R.color.color_finish));
                 }else if(Objects.equals(dateRest, "EN_ATTENTE")){
-                    eventItemStatus.setColorFilter( ContextCompat.getColor(getContext(), R.color.color_pending) );
+                    eventItemStatus.setColorFilter( ContextCompat.getColor(requireContext(), R.color.color_pending) );
                 }else if(Objects.equals(dateRest, "Commenced")){
-                    eventItemStatus.setColorFilter(ContextCompat.getColor(getContext(), R.color.color_court));
+                    eventItemStatus.setColorFilter(ContextCompat.getColor(requireContext(), R.color.color_court));
                 }else {
-                    eventItemStatus.setColorFilter( ContextCompat.getColor(getContext(), R.color.color_pending) );
+                    eventItemStatus.setColorFilter( ContextCompat.getColor(requireContext(), R.color.color_pending) );
                 }
                 Log.d(TAG , " currentUser.getEmail() : "+currentUser.getEmail()+" - event.getEmail() : "+event.getEmail());
                 if(!Objects.equals(currentUser.getEmail(), event.getEmail())){
@@ -177,11 +166,17 @@ public class EventFragment extends Fragment implements View.OnClickListener {
             eventDao.delete(event_id, new EventDao.OnEventDeleteListener() {
                 @Override
                 public void onEventDeleteSuccess() {
-                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_layout, new EventsFragment());
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
+//                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                    fragmentTransaction.replace(R.id.frame_layout, new EventsFragment());
+//                    fragmentTransaction.addToBackStack(null);
+//                    fragmentTransaction.commit();
+                    EventsFragment fragment = new EventsFragment();
+                    if(adapter!=null){
+                        adapter.addFragment(fragment);
+                        adapter.notifyDataSetChanged();
+                        viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+                    }
                 }
 
                 @Override
@@ -193,11 +188,17 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         }else if(view.getId()==R.id.btn_edit_event){
             Log.d(TAG,"bien edite");
 
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, EditEventFragment.newInstance(event_id));
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.replace(R.id.frame_layout, EditEventFragment.newInstance(event_id));
+//            fragmentTransaction.addToBackStack(null);
+//            fragmentTransaction.commit();
+            EditEventFragment fragment = EditEventFragment.newInstance(event_id);
+            if(adapter!=null){
+                adapter.addFragment(fragment);
+                adapter.notifyDataSetChanged();
+                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+            }
 
         }
     }

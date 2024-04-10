@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.activity.AuthActivity;
 import com.example.taskmanagement.activity.ForgetPasswordActivity;
+import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.dao.UserDao;
 import com.example.taskmanagement.fragment.SettingsFragment;
 import com.example.taskmanagement.model.User;
@@ -48,6 +50,8 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
     private TextInputEditText emailEditText , passwordEditText , confirmPasswordEditText , newPasswordEditText;
     private FirebaseUser currentUser;
     private UserDao userDao;
+    private ViewPager2 viewPager;
+    private VPAdapter adapter;
     public ChangePasswordFragment() {
         // Required empty public constructor
     }
@@ -57,7 +61,9 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        viewPager = requireActivity().findViewById(R.id.viewPager);
         userDao = new UserDao(db, auth, getContext(), requireActivity().getSupportFragmentManager() );
+        adapter = (VPAdapter) viewPager.getAdapter();
     }
     private void fetchDataAndProcess(){
         showDialog();
@@ -134,10 +140,16 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
                                             Log.d(TAG, "User password updated.");
                                             Toast.makeText(getContext(), "User password updated.", Toast.LENGTH_SHORT).show();
 
-                                            FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-                                            fragmentTransaction.replace(R.id.frame_layout, new SettingsFragment());
-                                            fragmentTransaction.addToBackStack(null);
-                                            fragmentTransaction.commit();
+//                                            FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+//                                            fragmentTransaction.replace(R.id.frame_layout, new SettingsFragment());
+//                                            fragmentTransaction.addToBackStack(null);
+//                                            fragmentTransaction.commit();
+                                            SettingsFragment fragment = new SettingsFragment();
+                                            if(adapter!=null){
+                                                adapter.addFragment(fragment);
+                                                adapter.notifyDataSetChanged();
+                                                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+                                            }
 
                                         }
                                     })

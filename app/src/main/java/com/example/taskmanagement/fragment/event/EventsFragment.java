@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,6 +22,7 @@ import android.widget.LinearLayout;
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.adapters.MyAdapter;
 import com.example.taskmanagement.adapters.MyAdapterEvents;
+import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.dao.EventDao;
 import com.example.taskmanagement.dao.TaskDao;
 import com.example.taskmanagement.fragment.task.EditTaskFragment;
@@ -43,6 +45,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
     private RecyclerView myRecycler;
     private LinearLayout progressBar;
     private EventDao eventDao;
+    private ViewPager2 viewPager;
 
     public EventsFragment() {
         // Required empty public constructor
@@ -56,7 +59,8 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         eventList = new LinkedList<>();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        eventDao = new EventDao(db, mAuth, getContext(), getActivity().getSupportFragmentManager());
+        viewPager = requireActivity().findViewById(R.id.viewPager);
+        eventDao = new EventDao(db, mAuth, getContext(), requireActivity().getSupportFragmentManager() , viewPager);
 
     }
 
@@ -91,7 +95,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
                         filtres.add(event);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapterEvents myAdapterEvents = new MyAdapterEvents(filtres,getContext(),getActivity().getSupportFragmentManager());
+                    MyAdapterEvents myAdapterEvents = new MyAdapterEvents(filtres,getContext(),requireActivity().getSupportFragmentManager() , requireActivity().findViewById(R.id.viewPager));
 
                     myRecycler.setAdapter(myAdapterEvents);
 
@@ -116,7 +120,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapterEvents myAdapterEvents = new MyAdapterEvents(events,getContext(),getActivity().getSupportFragmentManager());
+                MyAdapterEvents myAdapterEvents = new MyAdapterEvents(events,getContext(),requireActivity().getSupportFragmentManager() , requireActivity().findViewById( R.id.viewPager ));
                 myRecycler.setAdapter(myAdapterEvents);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -132,12 +136,19 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_add_event ){
+//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.replace(R.id.frame_layout, new AddEventFragment());
+//            fragmentTransaction.addToBackStack(null);
+//            fragmentTransaction.commit();
+            VPAdapter adapter = (VPAdapter) viewPager.getAdapter();
+            AddEventFragment fragment = new AddEventFragment();
+            if(adapter!=null){
+                adapter.addFragment(fragment);
+                adapter.notifyDataSetChanged();
+                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+            }
 
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, new AddEventFragment());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
 
         }
     }

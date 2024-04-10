@@ -6,7 +6,9 @@ import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.fragment.task.AddNewTaskFragment;
 import com.example.taskmanagement.fragment.task.HomeRecyclerViewsFragment;
 import com.example.taskmanagement.R;
@@ -39,11 +41,15 @@ public class TaskDao {
     private final FirebaseUser currentUser;
     private final Context context;
     private final FragmentManager fragmentManager;
-    public TaskDao(FirebaseFirestore db, FirebaseAuth mAuth,Context context, FragmentManager fragmentManager) {
+    private ViewPager2 viewPager;
+    private VPAdapter adapter;
+    public TaskDao(FirebaseFirestore db, FirebaseAuth mAuth,Context context, FragmentManager fragmentManager , ViewPager2 viewPager) {
         this.db = db;
         this.currentUser = mAuth.getCurrentUser();
         this.context=context;
         this.fragmentManager=fragmentManager;
+        this.viewPager = viewPager;
+        this.adapter = (VPAdapter) viewPager.getAdapter();
     }
     public void getTasks( OnTasksFetchListener listener) {
 
@@ -148,10 +154,16 @@ public class TaskDao {
                 Toast.makeText(context, "Add Task Success.", Toast.LENGTH_SHORT).show();
                 fragment.hideDialog();
                 Log.d(TAG, "DocumentSnapshot successfully written!");
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frame_layout, new HomeRecyclerViewsFragment());
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                fragmentTransaction.replace(R.id.frame_layout, new HomeRecyclerViewsFragment());
+//                fragmentTransaction.addToBackStack(null);
+//                fragmentTransaction.commit();
+                HomeRecyclerViewsFragment recyclerViewsFragment = new HomeRecyclerViewsFragment();
+                if(adapter!=null){
+                    adapter.addFragment(recyclerViewsFragment);
+                    adapter.notifyDataSetChanged();
+                    viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+                }
 
             })
             .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
@@ -192,10 +204,16 @@ public class TaskDao {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Add Task Success.", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "DocumentSnapshot successfully written!");
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance(task_id));
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.commit();
+//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                    fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance(task_id));
+//                    fragmentTransaction.addToBackStack(null);
+//                    fragmentTransaction.commit();
+                    TaskFragment fragment = TaskFragment.newInstance(task_id);
+                    if(adapter!=null){
+                        adapter.addFragment(fragment);
+                        adapter.notifyDataSetChanged();
+                        viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+                    }
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
         }

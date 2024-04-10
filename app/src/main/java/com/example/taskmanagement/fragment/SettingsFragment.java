@@ -7,6 +7,7 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.activity.AuthActivity;
+import com.example.taskmanagement.activity.TasksActivity;
+import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.dao.UserDao;
 import com.example.taskmanagement.fragment.user.ChangePasswordFragment;
 import com.example.taskmanagement.fragment.user.EditeProfileFragment;
@@ -36,6 +39,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private RelativeLayout progressBar , itemVisibility ;
     private TextView userName,email;
     private UserDao userDao;
+    private ViewPager2 viewPager;
     public SettingsFragment() {
         // Required empty public constructor
     }
@@ -45,6 +49,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         userDao = new UserDao(db, mAuth, getContext(), requireActivity().getSupportFragmentManager() );
+        viewPager = requireActivity().findViewById(R.id.viewPager);
     }
     private void fetchDataAndProcess(){
         showDialog();
@@ -101,32 +106,52 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
+        VPAdapter adapter = (VPAdapter) viewPager.getAdapter();
+
         if (view.getId()==R.id.card_edit_profile){
 
             Log.d(TAG,"edite Profile");
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, new EditeProfileFragment() );
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.replace(R.id.frame_layout, new EditeProfileFragment() );
+//            fragmentTransaction.addToBackStack(null);
+//            fragmentTransaction.commit();
+            EditeProfileFragment fragment = new EditeProfileFragment();
+            if(adapter!=null){
+                adapter.addFragment(fragment);
+                adapter.notifyDataSetChanged();
+                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+            }
 
         } else if (view.getId()==R.id.card_information) {
 
             Log.d(TAG,"information");
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, new InformationFragment());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.replace(R.id.frame_layout, new InformationFragment());
+//            fragmentTransaction.addToBackStack(null);
+//            fragmentTransaction.commit();
+            InformationFragment fragment = new InformationFragment();
+            if(adapter!=null){
+                adapter.addFragment(fragment);
+                adapter.notifyDataSetChanged();
+                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+            }
 
         } else if (view.getId()==R.id.card_change_password) {
 
             Log.d(TAG,"change password");
-            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, new ChangePasswordFragment());
-            fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
+//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//            fragmentTransaction.replace(R.id.frame_layout, new ChangePasswordFragment());
+//            fragmentTransaction.addToBackStack(null);
+//            fragmentTransaction.commit();
+            ChangePasswordFragment fragment = new ChangePasswordFragment();
+            if(adapter!=null){
+                adapter.addFragment(fragment);
+                adapter.notifyDataSetChanged();
+                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+            }
 
         } else if (view.getId()==R.id.card_log_out) {
 
