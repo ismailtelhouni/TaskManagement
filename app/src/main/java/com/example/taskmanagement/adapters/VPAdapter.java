@@ -1,5 +1,7 @@
 package com.example.taskmanagement.adapters;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -10,12 +12,15 @@ import com.example.taskmanagement.fragment.task.TaskFragment;
 import java.util.ArrayList;
 
 public class VPAdapter extends FragmentStateAdapter {
-    private ArrayList<Fragment> arr;
+    private static final String TAG = "TAGVPAdapter";
+    private final ArrayList<Fragment> arr;
+    private final ArrayList<Fragment> listBack;
 
     public VPAdapter( @NonNull FragmentActivity fragmentActivity , ArrayList<Fragment> arr ) {
         super(fragmentActivity);
 
         this.arr = arr;
+        this.listBack=new ArrayList<>();
 
     }
 
@@ -30,4 +35,19 @@ public class VPAdapter extends FragmentStateAdapter {
 
         arr.add(fragment);
     }
+
+    public void addFragmentBack( Fragment fragment) {
+
+        listBack.add(fragment);
+    }
+
+    public int getSizeBack() { return listBack.size(); }
+
+
+    public void addFragmentWithPosition( int position ) {
+
+        Log.d(TAG , " fragment : " + listBack.get(position) );
+        arr.add(listBack.get(position));
+    }
+
 }

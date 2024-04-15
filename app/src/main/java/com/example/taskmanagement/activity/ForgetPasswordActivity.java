@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ForgetPasswordActivity extends AppCompatActivity implements View.OnClickListener {
-    private static final String TAG = "ForgotPasswordActivity";
+    private static final String TAG = "TAGForgotPasswordActivity";
     private RelativeLayout progressBar , itemVisibility ;
     private TextInputEditText emailEditText ;
     FirebaseAuth auth;

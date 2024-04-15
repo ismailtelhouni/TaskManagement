@@ -1,35 +1,27 @@
 package com.example.taskmanagement.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageButton;
-import android.widget.PopupMenu;
+import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.adapters.VPAdapter;
-import com.example.taskmanagement.fragment.InformationFragment;
 import com.example.taskmanagement.fragment.event.AddEventFragment;
-import com.example.taskmanagement.fragment.event.EditEventFragment;
-import com.example.taskmanagement.fragment.event.EventFragment;
 import com.example.taskmanagement.fragment.event.EventsFragment;
+import com.example.taskmanagement.fragment.note.NewNoteFragment;
 import com.example.taskmanagement.fragment.note.NotesFragment;
 import com.example.taskmanagement.fragment.task.AddNewTaskFragment;
-import com.example.taskmanagement.fragment.task.EditTaskFragment;
 import com.example.taskmanagement.fragment.task.HomeRecyclerViewsFragment;
 import com.example.taskmanagement.fragment.SettingsFragment;
-import com.example.taskmanagement.fragment.task.TaskFragment;
-import com.example.taskmanagement.fragment.user.ChangePasswordFragment;
-import com.example.taskmanagement.fragment.user.EditeProfileFragment;
-import com.example.taskmanagement.fragment.user.ForgetPasswordFragment;
-import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.example.taskmanagement.databinding.ActivityTasksBinding;
@@ -37,13 +29,13 @@ import com.example.taskmanagement.databinding.ActivityTasksBinding;
 import java.util.ArrayList;
 
 public class TasksActivity extends AppCompatActivity {
-
+    private static final String TAG = "TAGTasksActivity";
     FirebaseAuth mAuth;
     FirebaseUser user;
-    ImageButton dropdownButton;
     ActivityTasksBinding binding;
     ArrayList<Fragment> fragmentArrayList = new ArrayList<>();
     ViewPager2 viewPager ;
+    private String fragmentPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,31 +44,51 @@ public class TasksActivity extends AppCompatActivity {
         binding = ActivityTasksBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mAuth = FirebaseAuth.getInstance();
-
+        MaterialToolbar toolbar = findViewById(R.id.tool_bar);
+        fragmentPage = "HOME";
         viewPager = findViewById(R.id.viewPager);
-//        TabLayout tabLayout = findViewById(R.id.tabLayout);
 
-        fragmentArrayList.add(new HomeRecyclerViewsFragment());     // 0
-        fragmentArrayList.add(new AddNewTaskFragment());            // 1
-        fragmentArrayList.add(new EventsFragment());                // 2
-        fragmentArrayList.add(new NotesFragment());                 // 3
-        fragmentArrayList.add(new SettingsFragment());              // 4
-//        fragmentArrayList.add(new TaskFragment());                  // 5
-//        fragmentArrayList.add(new EditTaskFragment());              // 6
-//        fragmentArrayList.add(new AddEventFragment());              // 7
-//        fragmentArrayList.add(new EditEventFragment());             // 8
-//        fragmentArrayList.add(new EventFragment());                 // 9
-//        fragmentArrayList.add(new ChangePasswordFragment());        // 10
-//        fragmentArrayList.add(new EditeProfileFragment());          // 11
-//        fragmentArrayList.add(new InformationFragment());           // 12
+        fragmentArrayList.add(new HomeRecyclerViewsFragment());
+        fragmentArrayList.add(new AddNewTaskFragment());
+        fragmentArrayList.add(new EventsFragment());
+        fragmentArrayList.add(new NotesFragment());
+        fragmentArrayList.add(new SettingsFragment());
 
-        dropdownButton = findViewById(R.id.dropdownButton);
         VPAdapter adapter = new VPAdapter(this , fragmentArrayList );
         viewPager.setAdapter(adapter);
 
-//        new TabLayoutMediator(tabLayout, viewPager,
-//                (tab, position) -> tab.setText("Tab " + (position + 1))
-//        ).attach();
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
+                if(item.getItemId()==R.id.menu_favorite){
+                    Toast.makeText(TasksActivity.this , "Vous avez cliqué sur le menu favorite",Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (item.getItemId()==R.id.menu_search) {
+                    Toast.makeText(TasksActivity.this , "Vous avez cliqué sur le menu search",Toast.LENGTH_SHORT).show();
+                    return true;
+                } else if (item.getItemId()==R.id.menu_new_event) {
+                    AddEventFragment fragment = new AddEventFragment();
+                    adapter.addFragment(fragment);
+                    adapter.notifyDataSetChanged();
+                    viewPager.setCurrentItem(adapter.getItemCount() - 1, false);
+
+                    return true;
+                } else if (item.getItemId()==R.id.menu_new_note) {
+
+                    NewNoteFragment fragment = new NewNoteFragment();
+                    adapter.addFragment(fragment);
+                    adapter.notifyDataSetChanged();
+                    viewPager.setCurrentItem(adapter.getItemCount() - 1, false);
+
+                    return true;
+                } else if (item.getItemId()==R.id.menu_settings) {
+                    Toast.makeText(TasksActivity.this , "Vous avez cliqué sur le menu settings",Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -86,21 +98,56 @@ public class TasksActivity extends AppCompatActivity {
                 switch (position){
                     case 0:
                         binding.bottomNavigation.setSelectedItemId(R.id.home);
+                        fragmentPage = "HOME";
                         break;
                     case 1:
                         binding.bottomNavigation.setSelectedItemId(R.id.add_new_task);
+                        fragmentPage = "ADD_NEW_TASK";
                         break;
                     case 2:
                         binding.bottomNavigation.setSelectedItemId(R.id.events);
+                        fragmentPage = "EVENTS";
                         break;
                     case 3:
                         binding.bottomNavigation.setSelectedItemId(R.id.notes);
+                        fragmentPage = "NOTES";
                         break;
                     case 4:
                         binding.bottomNavigation.setSelectedItemId(R.id.settings);
+                        fragmentPage = "SETTINGS";
                         break;
-
                 }
+            }
+        });
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+
+//                Log.d(TAG , "tesssssssssssssssssssst"+ fragmentPage );
+//
+//                switch(fragmentPage){
+//                    case "HOME":
+//                        viewPager.setCurrentItem(0);
+//                        break;
+//                    case "ADD_NEW_TASK":
+//                        viewPager.setCurrentItem(1);
+//                        break;
+//                    case "EVENTS":
+//                        viewPager.setCurrentItem(2);
+//                        break;
+//                    case "NOTES":
+//                        viewPager.setCurrentItem(3);
+//                        break;
+//                    case "SETTINGS":
+//                        viewPager.setCurrentItem(4);
+//                        break;
+//                }
             }
         });
 
@@ -108,10 +155,30 @@ public class TasksActivity extends AppCompatActivity {
 //        replaceFragment(new HomeRecyclerViewsFragment());
         viewPager.setCurrentItem(0);
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
+//
+//            switch(fragmentPage){
+//                case "HOME":
+//                    adapter.addFragmentBack(new HomeRecyclerViewsFragment());
+//                    break;
+//                case "ADD_NEW_TASK":
+//                    adapter.addFragmentBack(new AddNewTaskFragment());
+//                    break;
+//                case "EVENTS":
+//                    adapter.addFragmentBack(new EventsFragment());
+//                    break;
+//                case "NOTES":
+//                    adapter.addFragmentBack(new NotesFragment());
+//                    break;
+//                case "SETTINGS":
+//                    adapter.addFragmentBack(new SettingsFragment());
+//                    break;
+//            }
+
             int itemId = item.getItemId();
             if(itemId == R.id.home){
 //                replaceFragment(new HomeRecyclerViewsFragment());
                 viewPager.setCurrentItem(0);
+
             } else if( itemId == R.id.add_new_task ){
 //                replaceFragment(new AddNewTaskFragment());
                 viewPager.setCurrentItem(1);
@@ -141,39 +208,31 @@ public class TasksActivity extends AppCompatActivity {
 //                .commit();
 //        }
 
-        dropdownButton.setOnClickListener(v->{
-            PopupMenu popupMenu = new PopupMenu(TasksActivity.this, dropdownButton);
-            popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
-            popupMenu.setOnMenuItemClickListener(item -> {
-                int itemId = item.getItemId();
-                if (itemId == R.id.menu_item1) {
-                    // Code à exécuter lorsque l'option 1 est sélectionnée
-                    FirebaseAuth.getInstance().signOut();
-                    Intent intent = new Intent(TasksActivity.this, AuthActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return true;
-                } else if (itemId == R.id.menu_item2) {
-                    // Code à exécuter lorsque l'option 1 est sélectionnée
-                    FirebaseAuth.getInstance().signOut();
-                    Intent intent = new Intent(TasksActivity.this, AuthActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-            popupMenu.show();
-        });
+//        dropdownButton.setOnClickListener(v->{
+//            PopupMenu popupMenu = new PopupMenu(TasksActivity.this, dropdownButton);
+//            popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+//            popupMenu.setOnMenuItemClickListener(item -> {
+//                int itemId = item.getItemId();
+//                if (itemId == R.id.menu_item1) {
+//                    // Code à exécuter lorsque l'option 1 est sélectionnée
+//                    FirebaseAuth.getInstance().signOut();
+//                    Intent intent = new Intent(TasksActivity.this, AuthActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//                    return true;
+//                } else if (itemId == R.id.menu_item2) {
+//                    // Code à exécuter lorsque l'option 1 est sélectionnée
+//                    FirebaseAuth.getInstance().signOut();
+//                    Intent intent = new Intent(TasksActivity.this, AuthActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//                    return true;
+//                } else {
+//                    return false;
+//                }
+//            });
+//            popupMenu.show();
+//        });
     }
-//    private void replaceFragment(Fragment fragment){
-//
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.frame_layout,fragment);
-//        fragmentTransaction.commit();
-//
-//    }
 
 }

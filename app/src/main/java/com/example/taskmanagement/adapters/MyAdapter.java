@@ -32,13 +32,13 @@ import java.util.Objects;
 import com.example.taskmanagement.model.Task;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-    private static final String TAG = "EventsFragment";
+    private static final String TAG = "TAGMyAdapter";
     private final LinkedList<Task> tasks;
     private final FirebaseFirestore db;
     private final FirebaseUser currentUser;
-    private ViewPager2 viewPager;
+    private final ViewPager2 viewPager;
 
-    public MyAdapter(LinkedList<Task> tasks, Context context , FragmentManager fragmentManager , ViewPager2 viewPager ) {
+    public MyAdapter(LinkedList<Task> tasks , ViewPager2 viewPager ) {
         this.db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         this.currentUser = mAuth.getCurrentUser();
@@ -78,7 +78,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
 
         holder.box.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            private static final String TAG = "TASK_ITEM";
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -115,7 +114,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             if(adapter!=null){
                 adapter.addFragment(taskFragment);
                 adapter.notifyDataSetChanged();
-                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+                Log.d(TAG , "adaaaaapter : "+adapter.getItemCount() );
+                viewPager.setCurrentItem(adapter.getItemCount() - 1, false);
             }
 
         });

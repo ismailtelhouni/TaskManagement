@@ -3,6 +3,7 @@ package com.example.taskmanagement.fragment.user;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -64,6 +65,22 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
         viewPager = requireActivity().findViewById(R.id.viewPager);
         userDao = new UserDao(db, auth, getContext(), requireActivity().getSupportFragmentManager() );
         adapter = (VPAdapter) viewPager.getAdapter();
+
+        if (adapter!=null)
+            adapter.addFragmentBack(this);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
     private void fetchDataAndProcess(){
         showDialog();

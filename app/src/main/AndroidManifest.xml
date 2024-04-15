@@ -44,7 +44,7 @@
         <activity
             android:name=".activity.AuthActivity"
             android:exported="true"
-            android:theme="@style/Base.Theme.TaskManagement"></activity>
+            android:theme="@style/Base.Theme.TaskManagement" />
     </application>
 
 </manifest>

@@ -30,7 +30,7 @@ import com.example.taskmanagement.model.Event;
 
 public class EventDao {
 
-    private static final String TAG = "TaskDao";
+    private static final String TAG = "TAGEventDao";
     private final FirebaseFirestore db;
     private final FirebaseUser currentUser;
     private final Context context;

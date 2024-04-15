@@ -2,10 +2,12 @@ package com.example.taskmanagement.fragment.task;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,6 +20,7 @@ import android.widget.LinearLayout;
 
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.adapters.MyAdapter;
+import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.dao.TaskDao;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,7 +36,7 @@ import com.example.taskmanagement.model.Task;
  */
 public class HomeRecyclerViewsFragment extends Fragment {
 
-    private static final String TAG = "HomeRecycleFragment";
+    private static final String TAG = "TAGHomeRecycleFragment";
     private LinkedList<Task> taskList;
     private RecyclerView myRecycler;
     private FirebaseFirestore db;
@@ -42,6 +45,8 @@ public class HomeRecyclerViewsFragment extends Fragment {
     private FirebaseAuth mAuth;
     private TaskDao taskDao;
     private EditText search;
+    private ViewPager2 viewPager;
+    private VPAdapter adapter;
 
     public HomeRecyclerViewsFragment() {
         // Required empty public constructor
@@ -53,10 +58,26 @@ public class HomeRecyclerViewsFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        taskList= new LinkedList<Task>();
+        taskList= new LinkedList<>();
         currentUser = mAuth.getCurrentUser();
-        taskDao = new TaskDao( db ,mAuth ,getContext(),requireActivity().getSupportFragmentManager() , requireActivity().findViewById(R.id.viewPager));
+        viewPager = requireActivity().findViewById(R.id.viewPager);
+        taskDao = new TaskDao( db ,mAuth ,getContext(),requireActivity().getSupportFragmentManager() , viewPager);
+        adapter = (VPAdapter) viewPager.getAdapter();
+        if (adapter!=null)
+            adapter.addFragmentBack(this);
 
+        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
@@ -70,21 +91,16 @@ public class HomeRecyclerViewsFragment extends Fragment {
         Log.d(TAG,"user :"+currentUser.toString());
 
         search.addTextChangedListener(new TextWatcher() {
-
-
             @Override
             public void afterTextChanged(Editable s) {
-
                 Log.d(TAG, "filtres récupérées avec succès : afterTextChanged ");
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after){
-
                 Log.d(TAG, "filtres récupérées avec succès : beforeTextChanged");
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                 Log.d(TAG, "filtres récupérées avec succès : onTextChanged "+s.toString());
                 LinkedList<Task> filtres= new LinkedList<Task> ();
                 for (Task task : taskList ){
@@ -93,7 +109,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                         filtres.add(task);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapter myAdapter = new MyAdapter(filtres,getContext(),getParentFragmentManager() , requireActivity().findViewById(R.id.viewPager));
+                    MyAdapter myAdapter = new MyAdapter(filtres , requireActivity().findViewById(R.id.viewPager));
 
                     myRecycler.setAdapter(myAdapter);
 
@@ -118,7 +134,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapter myAdapter = new MyAdapter(tasks,getContext(), getParentFragmentManager(), requireActivity().findViewById(R.id.viewPager));
+                MyAdapter myAdapter = new MyAdapter(tasks, requireActivity().findViewById(R.id.viewPager));
                 myRecycler.setAdapter(myAdapter);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

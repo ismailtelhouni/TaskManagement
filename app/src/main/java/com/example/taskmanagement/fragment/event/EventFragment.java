@@ -2,6 +2,7 @@ package com.example.taskmanagement.fragment.event;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
@@ -36,7 +37,7 @@ import java.util.Objects;
  */
 public class EventFragment extends Fragment implements View.OnClickListener {
     private static final String EVENT_ID = "1";
-    private static final String TAG = "EventFragment";
+    private static final String TAG = "TAGEventFragment";
     private String event_id;
     private TextView eventItemTitle , eventItemDate , eventItemDescription , eventItemLieu , eventItemCategory , itemDateRest ;
     private FirebaseUser currentUser;
@@ -76,6 +77,21 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         viewPager = requireActivity().findViewById(R.id.viewPager);
         eventDao = new EventDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() , viewPager );
         adapter = (VPAdapter) viewPager.getAdapter();
+        if (adapter!=null)
+            adapter.addFragmentBack(this);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                viewPager.setCurrentItem( adapter.getItemCount()-1 , true );
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
     private void fetchDataAndProcess(){
         eventDao.getEvent(event_id, new EventDao.OnEventFetchListener() {
@@ -175,7 +191,7 @@ public class EventFragment extends Fragment implements View.OnClickListener {
                     if(adapter!=null){
                         adapter.addFragment(fragment);
                         adapter.notifyDataSetChanged();
-                        viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+                        viewPager.setCurrentItem(adapter.getItemCount() - 1, false);
                     }
                 }
 
@@ -197,7 +213,7 @@ public class EventFragment extends Fragment implements View.OnClickListener {
             if(adapter!=null){
                 adapter.addFragment(fragment);
                 adapter.notifyDataSetChanged();
-                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+                viewPager.setCurrentItem(adapter.getItemCount() - 1, false);
             }
 
         }

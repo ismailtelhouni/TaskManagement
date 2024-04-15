@@ -30,6 +30,7 @@ import java.util.LinkedList;
 
 public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyViewHolder>{
 
+    private static final String TAG = "TAGMyAdapterEvents";
     private final LinkedList<Event> events;
     private final Context context;
     private final FirebaseFirestore db;
