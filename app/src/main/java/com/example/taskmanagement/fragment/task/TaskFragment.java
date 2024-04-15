@@ -2,6 +2,7 @@ package com.example.taskmanagement.fragment.task;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -38,13 +39,9 @@ import com.example.taskmanagement.model.Task;
  * create an instance of this fragment.
  */
 public class TaskFragment extends Fragment implements View.OnClickListener {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String TASK_ID = "1";
-    private static final String TAG = "TaskFragment";
+    private static final String TAG = "TAGTaskFragment";
     private String task_id;
-    private Task taskItem;
     private TextView taskItemTitle ,taskItemDate , taskItemDescription ;
     private FirebaseFirestore db;
     private ImageView taskItemDone , taskItemPending , taskItemImg;
@@ -87,6 +84,22 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
         viewPager = requireActivity().findViewById(R.id.viewPager);
         taskDao = new TaskDao(db,mAuth,getContext(),requireActivity().getSupportFragmentManager() , viewPager);
         adapter = (VPAdapter) viewPager.getAdapter();
+        if (adapter!=null)
+            adapter.addFragmentBack(this);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+
     }
 
     private void fetchDataAndProcess(){

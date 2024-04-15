@@ -7,24 +7,40 @@
     android:orientation="vertical"
     android:background="@color/white"
     tools:context=".activity.TasksActivity">
-    <LinearLayout
+
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="end"
         >
-        <ImageButton
-            android:id="@+id/dropdownButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/menu24px"
-            android:background="@color/white"
-            android:padding="8dp"
-            android:contentDescription="@string/menu"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="My Tasks"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            app:menu="@menu/app_bar_menu"
             />
-    </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:gravity="end"-->
+<!--        >-->
+<!--        <ImageButton-->
+<!--            android:id="@+id/dropdownButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:srcCompat="@drawable/menu24px"-->
+<!--            android:background="@color/white"-->
+<!--            android:padding="8dp"-->
+<!--            android:contentDescription="@string/menu"-->
+<!--            android:minWidth="48dp"-->
+<!--            android:minHeight="48dp"-->
+<!--            />-->
+<!--    </LinearLayout>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class UserDao {
 
-    private static final String TAG = "TaskDao";
+    private static final String TAG = "TAGUserDao";
     private final FirebaseFirestore db;
     private final FirebaseUser currentUser;
     private final Context context;

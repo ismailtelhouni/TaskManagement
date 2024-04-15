@@ -1,13 +1,14 @@
 package com.example.taskmanagement.fragment.event;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,11 +21,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.dao.EventDao;
-import com.example.taskmanagement.dao.TaskDao;
 import com.example.taskmanagement.model.Event;
 import com.example.taskmanagement.shared.Utils;
-import com.example.taskmanagement.transformation.BorderTransformation;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,10 +37,9 @@ import java.util.Calendar;
 
 public class AddEventFragment extends Fragment implements View.OnClickListener{
 
-    private static final String TAG = "AddEventFragment";
+    private static final String TAG = "TAGAddEventFragment";
     private TextInputEditText titleEditText , categoryEditText , lieuEditText , descriptionEditText , startDateEditText , endDateEditText;
     private ProgressBar progressBar;
-    private FirebaseFirestore db;
     private DatePickerDialog.OnDateSetListener onDateSetListener , onEndDateSetListener;
     private String startDate , endDate;
     private ImageButton imageUpload;
@@ -48,9 +47,10 @@ public class AddEventFragment extends Fragment implements View.OnClickListener{
     private ActivityResultLauncher<String> mGetContent;
     private StorageReference storageReference;
     private FirebaseUser currentUser;
-    private FirebaseAuth mAuth;
     private EventDao eventDao;
     private Button btnSaveEvent;
+    private ViewPager2 viewPager;
+    private VPAdapter adapter;
     public AddEventFragment() {
         // Required empty public constructor
     }
@@ -59,15 +59,33 @@ public class AddEventFragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("events");
-        eventDao = new EventDao(db,mAuth,getContext(),requireActivity().getSupportFragmentManager() , requireActivity().findViewById(R.id.viewPager));
+        viewPager = requireActivity().findViewById(R.id.viewPager);
+        eventDao = new EventDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() , viewPager );
+        adapter = (VPAdapter) viewPager.getAdapter();
+        if (adapter!=null)
+            adapter.addFragmentBack(this);
 
         if( mAuth.getCurrentUser() != null){
             currentUser = mAuth.getCurrentUser();
             Log.d(TAG,"user :"+currentUser.toString());
         }
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
             result -> {
                 if (result != null) {

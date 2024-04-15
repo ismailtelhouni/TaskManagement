@@ -2,6 +2,7 @@ package com.example.taskmanagement.fragment.event;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -40,13 +41,13 @@ import java.util.LinkedList;
  */
 public class EventsFragment extends Fragment implements View.OnClickListener{
 
-    private static final String TAG = "EventsFragment";
+    private static final String TAG = "TAGEventsFragment";
     private LinkedList<Event> eventList;
     private RecyclerView myRecycler;
     private LinearLayout progressBar;
     private EventDao eventDao;
     private ViewPager2 viewPager;
-
+    private VPAdapter adapter;
     public EventsFragment() {
         // Required empty public constructor
     }
@@ -61,6 +62,25 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
         FirebaseUser currentUser = mAuth.getCurrentUser();
         viewPager = requireActivity().findViewById(R.id.viewPager);
         eventDao = new EventDao(db, mAuth, getContext(), requireActivity().getSupportFragmentManager() , viewPager);
+        adapter = (VPAdapter) viewPager.getAdapter();
+        if (adapter!=null){
+            Log.d(TAG , " adapter.getSizeBack() : " + adapter.getSizeBack() );
+            adapter.addFragmentBack(this);
+            Log.d(TAG , " adapter.getSizeBack() : " + adapter.getSizeBack() );
+        }
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
 
     }
 

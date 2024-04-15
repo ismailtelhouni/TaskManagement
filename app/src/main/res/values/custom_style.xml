@@ -3,4 +3,7 @@
     <style name="circuler">
         <item name="cornerSize">50%</item>
     </style>
+    <style name="TextAppearance.App.TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textSize">16sp</item> <!-- Taille du texte du hint -->
+    </style>
 </resources>

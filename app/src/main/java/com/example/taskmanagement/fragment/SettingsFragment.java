@@ -35,7 +35,7 @@ import com.squareup.picasso.Picasso;
 public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     private ShapeableImageView avatar;
-    private static final String TAG = "SettingsFragment";
+    private static final String TAG = "TAGSettingsFragment";
     private RelativeLayout progressBar , itemVisibility ;
     private TextView userName,email;
     private UserDao userDao;

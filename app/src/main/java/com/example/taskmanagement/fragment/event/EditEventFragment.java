@@ -4,9 +4,11 @@ import android.app.DatePickerDialog;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.dao.EventDao;
 import com.example.taskmanagement.model.Event;
 import com.example.taskmanagement.shared.Utils;
@@ -40,12 +43,11 @@ import java.util.Calendar;
 public class EditEventFragment extends Fragment implements View.OnClickListener{
 
     private static final String EVENT_ID = "1";
-    private static final String TAG = "EditEventFragment";
+    private static final String TAG = "TAGEditEventFragment";
     private String event_id;
     private Event oldEvent;
     private TextInputEditText titleEditText , categoryEditText , lieuEditText , descriptionEditText , startDateEditText , endDateEditText;
     private ProgressBar progressBar;
-    private FirebaseFirestore db;
     private DatePickerDialog.OnDateSetListener onDateSetListener , onEndDateSetListener;
     private String startDate , endDate;
     private ImageButton imageUpload;
@@ -53,9 +55,10 @@ public class EditEventFragment extends Fragment implements View.OnClickListener{
     private ActivityResultLauncher<String> mGetContent;
     private StorageReference storageReference;
     private FirebaseUser currentUser;
-    private FirebaseAuth mAuth;
     private EventDao eventDao;
     private Button btnSaveEvent;
+    private ViewPager2 viewPager;
+    private VPAdapter adapter;
     public EditEventFragment() {
         // Required empty public constructor
     }
@@ -82,10 +85,27 @@ public class EditEventFragment extends Fragment implements View.OnClickListener{
         if (getArguments() != null) {
             event_id = getArguments().getString(EVENT_ID);
         }
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("events");
-        eventDao = new EventDao(db,mAuth,getContext(),requireActivity().getSupportFragmentManager(), requireActivity().findViewById(R.id.viewPager));
+        viewPager = requireActivity().findViewById(R.id.viewPager);
+        eventDao = new EventDao( db , mAuth , getContext() , requireActivity().getSupportFragmentManager() , viewPager );
+        adapter = (VPAdapter) viewPager.getAdapter();
+        if (adapter!=null)
+            adapter.addFragmentBack(this);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
 
         if( mAuth.getCurrentUser() != null){
             currentUser = mAuth.getCurrentUser();

@@ -36,13 +36,13 @@ import java.util.Map;
 import com.example.taskmanagement.model.Task;
 
 public class TaskDao {
-    private static final String TAG = "TaskDao";
+    private static final String TAG = "TAGTaskDao";
     private final FirebaseFirestore db;
     private final FirebaseUser currentUser;
     private final Context context;
     private final FragmentManager fragmentManager;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
+    private final ViewPager2 viewPager;
+    private final VPAdapter adapter;
     public TaskDao(FirebaseFirestore db, FirebaseAuth mAuth,Context context, FragmentManager fragmentManager , ViewPager2 viewPager) {
         this.db = db;
         this.currentUser = mAuth.getCurrentUser();
@@ -140,8 +140,6 @@ public class TaskDao {
         task.put("title",taskModel.getTitle());
         task.put("description",taskModel.getDescription());
         task.put("date", timestamp);
-//        task.put("date",taskModel.getDate());
-//        task.put("time",taskModel.getTime());
         task.put("img",taskModel.getImg());
         task.put("doc_url",taskModel.getDoc_url());
         task.put("etat","EN_ATENTE");

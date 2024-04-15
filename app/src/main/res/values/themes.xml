@@ -5,5 +5,4 @@
         <item name="colorPrimary">@color/primary</item>
     </style>
 
-    <style name="Theme.TaskManagement" parent="Base.Theme.TaskManagement" />
 </resources>
