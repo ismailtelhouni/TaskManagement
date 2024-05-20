@@ -29,22 +29,21 @@ import com.example.taskmanagement.dao.NoteDao;
 import com.example.taskmanagement.model.Note;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "TAGNewNoteFragment";
     private CheckBox notesPassword;
     private EditText notesInputDescription , notesInputTitle;
-    private TextView notesDate;
-    private ImageButton notesSave;
     private NoteDao noteDao;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
     private String password;
     public NewNoteFragment() {
         // Required empty public constructor
@@ -55,25 +54,21 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        noteDao = new NoteDao( db , mAuth , requireContext() , viewPager );
-        adapter = (VPAdapter) viewPager.getAdapter();
+        noteDao = new NoteDao( db , mAuth , requireContext() , requireActivity().getSupportFragmentManager() );
         password = null;
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
 
     }
 
@@ -83,11 +78,18 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_note, container, false);
 
-        notesSave = view.findViewById(R.id.notes_save);
-        notesDate = view.findViewById(R.id.notes_date);
+        ImageButton notesSave = view.findViewById(R.id.notes_save);
+        TextView notesDate = view.findViewById(R.id.notes_date);
         notesPassword = view.findViewById(R.id.notes_password);
         notesInputTitle = view.findViewById(R.id.notes_input_title);
         notesInputDescription = view.findViewById(R.id.notes_input_description);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy , HH:mm", Locale.getDefault());
+        String formattedDate = dateFormat.format(new Date());
+        Log.d(TAG, "Formatted Date: " + formattedDate);
+
+        notesDate.setText(formattedDate);
+
 
         notesSave.setOnClickListener(this);
         notesPassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -140,7 +142,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
             if(password != null){
                 note.setPassword(password);
             }
-            note.setDate(new Timestamp(new Date().getTime()));
+            note.setDate(Timestamp.now());
 
             Log.d(TAG , " la resultat esa lkmldknca : " + note);
 

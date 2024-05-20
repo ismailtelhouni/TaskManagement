@@ -9,12 +9,6 @@
         app:showAsAction="ifRoom"
         />
     <item
-        android:id="@+id/menu_search"
-        android:title="@string/search"
-        android:icon="@drawable/baseline_search_24"
-        app:showAsAction="ifRoom"
-        />
-    <item
         android:id="@+id/menu_new_event"
         android:title="@string/new_event"
         app:showAsAction="never"

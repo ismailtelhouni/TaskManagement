@@ -2,13 +2,11 @@ package com.example.taskmanagement.fragment.event;
 
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,14 +19,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.example.taskmanagement.R;
-import com.example.taskmanagement.adapters.MyAdapter;
 import com.example.taskmanagement.adapters.MyAdapterEvents;
-import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.dao.EventDao;
-import com.example.taskmanagement.dao.TaskDao;
-import com.example.taskmanagement.fragment.task.EditTaskFragment;
 import com.example.taskmanagement.model.Event;
-import com.example.taskmanagement.model.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -46,8 +39,6 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
     private RecyclerView myRecycler;
     private LinearLayout progressBar;
     private EventDao eventDao;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
     public EventsFragment() {
         // Required empty public constructor
     }
@@ -60,27 +51,20 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         eventList = new LinkedList<>();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        eventDao = new EventDao(db, mAuth, getContext(), requireActivity().getSupportFragmentManager() , viewPager);
-        adapter = (VPAdapter) viewPager.getAdapter();
-        if (adapter!=null){
-            Log.d(TAG , " adapter.getSizeBack() : " + adapter.getSizeBack() );
-            adapter.addFragmentBack(this);
-            Log.d(TAG , " adapter.getSizeBack() : " + adapter.getSizeBack() );
-        }
+        eventDao = new EventDao(db, mAuth, getContext(), requireActivity().getSupportFragmentManager() );
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
 
     }
 
@@ -115,7 +99,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
                         filtres.add(event);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapterEvents myAdapterEvents = new MyAdapterEvents(filtres,getContext(),requireActivity().getSupportFragmentManager() , requireActivity().findViewById(R.id.viewPager));
+                    MyAdapterEvents myAdapterEvents = new MyAdapterEvents(filtres,getContext() , requireActivity().getSupportFragmentManager() , "frame_layout");
 
                     myRecycler.setAdapter(myAdapterEvents);
 
@@ -140,7 +124,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapterEvents myAdapterEvents = new MyAdapterEvents(events,getContext(),requireActivity().getSupportFragmentManager() , requireActivity().findViewById( R.id.viewPager ));
+                MyAdapterEvents myAdapterEvents = new MyAdapterEvents(events,getContext() ,requireActivity().getSupportFragmentManager() , "frame_layout");
                 myRecycler.setAdapter(myAdapterEvents);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -156,20 +140,11 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_add_event ){
-//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.frame_layout, new AddEventFragment());
-//            fragmentTransaction.addToBackStack(null);
-//            fragmentTransaction.commit();
-            VPAdapter adapter = (VPAdapter) viewPager.getAdapter();
-            AddEventFragment fragment = new AddEventFragment();
-            if(adapter!=null){
-                adapter.addFragment(fragment);
-                adapter.notifyDataSetChanged();
-                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
-            }
-
-
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, new AddEventFragment());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         }
     }
     private void showDialog(){

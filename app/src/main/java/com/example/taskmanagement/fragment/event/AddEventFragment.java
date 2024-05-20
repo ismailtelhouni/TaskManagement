@@ -4,11 +4,9 @@ import android.app.DatePickerDialog;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,7 +19,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.taskmanagement.R;
-import com.example.taskmanagement.adapters.VPAdapter;
 import com.example.taskmanagement.dao.EventDao;
 import com.example.taskmanagement.model.Event;
 import com.example.taskmanagement.shared.Utils;
@@ -49,8 +46,6 @@ public class AddEventFragment extends Fragment implements View.OnClickListener{
     private FirebaseUser currentUser;
     private EventDao eventDao;
     private Button btnSaveEvent;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
     public AddEventFragment() {
         // Required empty public constructor
     }
@@ -62,29 +57,25 @@ public class AddEventFragment extends Fragment implements View.OnClickListener{
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("events");
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        eventDao = new EventDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() , viewPager );
-        adapter = (VPAdapter) viewPager.getAdapter();
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
+        eventDao = new EventDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() );
 
         if( mAuth.getCurrentUser() != null){
             currentUser = mAuth.getCurrentUser();
             Log.d(TAG,"user :"+currentUser.toString());
         }
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
 
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
             result -> {
@@ -153,8 +144,8 @@ public class AddEventFragment extends Fragment implements View.OnClickListener{
                 null ,
                 String.valueOf( startDateEditText.getText() ) ,
                 String.valueOf( endDateEditText.getText() ) ,
-                currentUser.getEmail()
-            );
+                currentUser.getEmail(),
+                    false);
             startDate = String.valueOf(startDateEditText.getText());
             endDate = String.valueOf(endDateEditText.getText());
 
@@ -195,7 +186,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener{
             int day = cal.get(Calendar.DAY_OF_MONTH);
 
             DatePickerDialog dialog = new DatePickerDialog(
-                    getActivity(),
+                    requireActivity(),
                     androidx.appcompat.R.style.Theme_AppCompat_DayNight_Dialog_Alert,
                     onEndDateSetListener,
                     year,
@@ -213,7 +204,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener{
             int day = cal.get(Calendar.DAY_OF_MONTH);
 
             DatePickerDialog dialog = new DatePickerDialog(
-                    getActivity(),
+                    requireActivity(),
                     androidx.appcompat.R.style.Theme_AppCompat_DayNight_Dialog,
                     onDateSetListener,
                     year,

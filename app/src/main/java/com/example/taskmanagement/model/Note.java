@@ -1,12 +1,29 @@
 package com.example.taskmanagement.model;
 
-import java.sql.Timestamp;
+import com.google.firebase.Timestamp;
 import java.util.Objects;
 
 public class Note {
 
-    private String id , title , description , password ;
+    private String id , title , description , password  , stringDate , stringTime;
+    private boolean follow ;
     private Timestamp date;
+
+    public String getStringDate() {
+        return stringDate;
+    }
+
+    public void setStringDate(String stringDate) {
+        this.stringDate = stringDate;
+    }
+
+    public String getStringTime() {
+        return stringTime;
+    }
+
+    public void setStringTime(String stringTime) {
+        this.stringTime = stringTime;
+    }
 
     @Override
     public String toString() {
@@ -19,12 +36,15 @@ public class Note {
                 '}';
     }
 
-    public Note(String id, String title, String description, String password, Timestamp date) {
+    public Note(String id, String title, String description, String password, String stringDate, String stringTime, boolean follow, Timestamp date) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.password = password;
+        this.follow = follow;
         this.date = date;
+        this.stringDate = stringDate;
+        this.stringTime = stringTime;
     }
 
     @Override
@@ -81,5 +101,13 @@ public class Note {
 
     public void setDate(Timestamp date) {
         this.date = date;
+    }
+
+    public boolean isFollow() {
+        return follow;
+    }
+
+    public void setFollow(boolean follow) {
+        this.follow = follow;
     }
 }

@@ -45,8 +45,6 @@ public class EditeProfileFragment extends Fragment implements View.OnClickListen
     private ActivityResultLauncher<String> mGetContent;
     private StorageReference storageReference;
     private UserDao userDao;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
     public EditeProfileFragment() {
         // Required empty public constructor
     }
@@ -68,23 +66,19 @@ public class EditeProfileFragment extends Fragment implements View.OnClickListen
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("users");
         userDao = new UserDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() );
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        adapter = (VPAdapter) viewPager.getAdapter();
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
 
     }
     @Override

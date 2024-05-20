@@ -51,8 +51,6 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
     private TextInputEditText emailEditText , passwordEditText , confirmPasswordEditText , newPasswordEditText;
     private FirebaseUser currentUser;
     private UserDao userDao;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
     public ChangePasswordFragment() {
         // Required empty public constructor
     }
@@ -62,25 +60,20 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
         FirebaseAuth auth = FirebaseAuth.getInstance();
         currentUser = auth.getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        viewPager = requireActivity().findViewById(R.id.viewPager);
         userDao = new UserDao(db, auth, getContext(), requireActivity().getSupportFragmentManager() );
-        adapter = (VPAdapter) viewPager.getAdapter();
 
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
     private void fetchDataAndProcess(){
         showDialog();
@@ -157,16 +150,10 @@ public class ChangePasswordFragment extends Fragment  implements View.OnClickLis
                                             Log.d(TAG, "User password updated.");
                                             Toast.makeText(getContext(), "User password updated.", Toast.LENGTH_SHORT).show();
 
-//                                            FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
-//                                            fragmentTransaction.replace(R.id.frame_layout, new SettingsFragment());
-//                                            fragmentTransaction.addToBackStack(null);
-//                                            fragmentTransaction.commit();
-                                            SettingsFragment fragment = new SettingsFragment();
-                                            if(adapter!=null){
-                                                adapter.addFragment(fragment);
-                                                adapter.notifyDataSetChanged();
-                                                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
-                                            }
+                                            FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                                            fragmentTransaction.replace(R.id.frame_layout, new SettingsFragment());
+                                            fragmentTransaction.addToBackStack(null);
+                                            fragmentTransaction.commit();
 
                                         }
                                     })

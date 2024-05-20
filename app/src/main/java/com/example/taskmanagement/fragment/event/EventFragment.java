@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
@@ -37,17 +39,16 @@ import java.util.Objects;
  */
 public class EventFragment extends Fragment implements View.OnClickListener {
     private static final String EVENT_ID = "1";
+    private static final String FRAME = "2";
     private static final String TAG = "TAGEventFragment";
-    private String event_id;
+    private String event_id , frame;
     private TextView eventItemTitle , eventItemDate , eventItemDescription , eventItemLieu , eventItemCategory , itemDateRest ;
     private FirebaseUser currentUser;
     private ImageView eventItemStatus , eventItemImage ;
     private ProgressBar progressBar ;
     private LinearLayout btnLayout ;
     private Event eventItem;
-    private ViewPager2 viewPager;
     private EventDao eventDao;
-    private VPAdapter adapter;
     private RelativeLayout itemData;
 
     /**
@@ -55,12 +56,14 @@ public class EventFragment extends Fragment implements View.OnClickListener {
      * this fragment using the provided parameters.
      *
      * @param event_id Parameter 1.
+     * @param frame Parameter 2.
      * @return A new instance of fragment EventFragment.
      */
-    public static EventFragment newInstance( String event_id ) {
+    public static EventFragment newInstance( String event_id , String frame ) {
         EventFragment fragment = new EventFragment();
         Bundle args = new Bundle();
         args.putString(EVENT_ID, event_id);
+        args.putString(FRAME, frame);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,28 +73,25 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             event_id = getArguments().getString(EVENT_ID);
+            frame = getArguments().getString(FRAME);
         }
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         currentUser = mAuth.getCurrentUser();
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        eventDao = new EventDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() , viewPager );
-        adapter = (VPAdapter) viewPager.getAdapter();
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
+        eventDao = new EventDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() );
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , true );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , true );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
     private void fetchDataAndProcess(){
         eventDao.getEvent(event_id, new EventDao.OnEventFetchListener() {
@@ -182,17 +182,11 @@ public class EventFragment extends Fragment implements View.OnClickListener {
             eventDao.delete(event_id, new EventDao.OnEventDeleteListener() {
                 @Override
                 public void onEventDeleteSuccess() {
-//                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                    fragmentTransaction.replace(R.id.frame_layout, new EventsFragment());
-//                    fragmentTransaction.addToBackStack(null);
-//                    fragmentTransaction.commit();
-                    EventsFragment fragment = new EventsFragment();
-                    if(adapter!=null){
-                        adapter.addFragment(fragment);
-                        adapter.notifyDataSetChanged();
-                        viewPager.setCurrentItem(adapter.getItemCount() - 1, false);
-                    }
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, new EventsFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 }
 
                 @Override
@@ -204,17 +198,16 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         }else if(view.getId()==R.id.btn_edit_event){
             Log.d(TAG,"bien edite");
 
-//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.frame_layout, EditEventFragment.newInstance(event_id));
-//            fragmentTransaction.addToBackStack(null);
-//            fragmentTransaction.commit();
-            EditEventFragment fragment = EditEventFragment.newInstance(event_id);
-            if(adapter!=null){
-                adapter.addFragment(fragment);
-                adapter.notifyDataSetChanged();
-                viewPager.setCurrentItem(adapter.getItemCount() - 1, false);
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, EditEventFragment.newInstance(event_id));
+            if (Objects.equals(frame, "frame_layout_follow")){
+                fragmentTransaction.replace(R.id.frame_layout_follow, EditEventFragment.newInstance( event_id ));
+            }else if (Objects.equals(frame, "frame_layout")){
+                fragmentTransaction.replace(R.id.frame_layout, EditEventFragment.newInstance( event_id ));
             }
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
 
         }
     }

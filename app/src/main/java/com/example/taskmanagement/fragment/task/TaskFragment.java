@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.Log;
@@ -40,8 +42,9 @@ import com.example.taskmanagement.model.Task;
  */
 public class TaskFragment extends Fragment implements View.OnClickListener {
     private static final String TASK_ID = "1";
+    private static final String FRAME = "2";
     private static final String TAG = "TAGTaskFragment";
-    private String task_id;
+    private String task_id , frame ;
     private TextView taskItemTitle ,taskItemDate , taskItemDescription ;
     private FirebaseFirestore db;
     private ImageView taskItemDone , taskItemPending , taskItemImg;
@@ -50,8 +53,6 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
     private RelativeLayout taskItemVisibility;
     private FirebaseAuth mAuth;
     private TaskDao taskDao;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
 
     public TaskFragment() {
         // Required empty public constructor
@@ -62,13 +63,15 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
      * this fragment using the provided parameters.
      *
      * @param id Parameter 1.
+     * @param frame Parameter 2.
      * @return A new instance of fragment TaskFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TaskFragment newInstance(String id) {
+    public static TaskFragment newInstance( String id , String frame ) {
         TaskFragment fragment = new TaskFragment();
         Bundle args = new Bundle();
         args.putString(TASK_ID, id);
+        args.putString(FRAME, frame);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,27 +81,24 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             task_id = getArguments().getString(TASK_ID);
+            frame = getArguments().getString(FRAME);
         }
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        taskDao = new TaskDao(db,mAuth,getContext(),requireActivity().getSupportFragmentManager() , viewPager);
-        adapter = (VPAdapter) viewPager.getAdapter();
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
+        taskDao = new TaskDao(db,mAuth,getContext(),requireActivity().getSupportFragmentManager() );
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
 
     }
 
@@ -158,7 +158,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
                                     .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
                                     .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
                             }
-                        }else{
+                        } else{
 
                             taskItemDone.setVisibility(View.GONE);
                             taskItemPending.setVisibility(View.VISIBLE);
@@ -197,7 +197,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
         taskItemImg = view.findViewById(R.id.task_item_img);
         progressBar = view.findViewById(R.id.progressBar);
         taskItemVisibility = view.findViewById(R.id.task_item_visibility);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),R.array.task_etats, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(requireContext(),R.array.task_etats, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
 
@@ -218,34 +218,26 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
         if(view.getId()==R.id.task_item_edit){
             Log.d(TAG,"bien edite");
 
-//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.frame_layout, EditTaskFragment.newInstance(task_id));
-//            fragmentTransaction.addToBackStack(null);
-//            fragmentTransaction.commit();
-            EditTaskFragment fragment = EditTaskFragment.newInstance(task_id);
-            if(adapter!=null){
-                adapter.addFragment(fragment);
-                adapter.notifyDataSetChanged();
-                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            if (Objects.equals(frame, "frame_layout_follow")){
+                fragmentTransaction.replace(R.id.frame_layout_follow, EditTaskFragment.newInstance(task_id));
+            }else if (Objects.equals(frame, "frame_layout")){
+                fragmentTransaction.replace(R.id.frame_layout, EditTaskFragment.newInstance(task_id));
             }
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
 
         } else if (view.getId()==R.id.task_item_delete) {
             Log.d(TAG,"bien delete");
             taskDao.delete(task_id, new TaskDao.OnTaskDeleteListener() {
                 @Override
                 public void onTaskDeleteSuccess() {
-//                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                    fragmentTransaction.replace(R.id.frame_layout, new HomeRecyclerViewsFragment());
-//                    fragmentTransaction.addToBackStack(null);
-//                    fragmentTransaction.commit();
-                    HomeRecyclerViewsFragment fragment = new HomeRecyclerViewsFragment();
-                    if(adapter!=null){
-                        adapter.addFragment(fragment);
-                        adapter.notifyDataSetChanged();
-                        viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
-                    }
+                    FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, new HomeRecyclerViewsFragment());
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 }
                 @Override
                 public void onTaskDeleteFailure(Exception e) {

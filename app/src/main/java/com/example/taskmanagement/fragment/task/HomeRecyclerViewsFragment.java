@@ -39,14 +39,10 @@ public class HomeRecyclerViewsFragment extends Fragment {
     private static final String TAG = "TAGHomeRecycleFragment";
     private LinkedList<Task> taskList;
     private RecyclerView myRecycler;
-    private FirebaseFirestore db;
     private LinearLayout progressBar;
     private FirebaseUser currentUser;
-    private FirebaseAuth mAuth;
     private TaskDao taskDao;
     private EditText search;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
 
     public HomeRecyclerViewsFragment() {
         // Required empty public constructor
@@ -56,28 +52,24 @@ public class HomeRecyclerViewsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         taskList= new LinkedList<>();
         currentUser = mAuth.getCurrentUser();
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        taskDao = new TaskDao( db ,mAuth ,getContext(),requireActivity().getSupportFragmentManager() , viewPager);
-        adapter = (VPAdapter) viewPager.getAdapter();
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
+        taskDao = new TaskDao(db, mAuth,getContext(),requireActivity().getSupportFragmentManager() );
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override
@@ -109,7 +101,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                         filtres.add(task);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapter myAdapter = new MyAdapter(filtres , requireActivity().findViewById(R.id.viewPager));
+                    MyAdapter myAdapter = new MyAdapter( filtres , requireActivity().getSupportFragmentManager() , requireContext() , "frame_layout");
 
                     myRecycler.setAdapter(myAdapter);
 
@@ -134,7 +126,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapter myAdapter = new MyAdapter(tasks, requireActivity().findViewById(R.id.viewPager));
+                MyAdapter myAdapter = new MyAdapter(tasks, requireActivity().getSupportFragmentManager() , requireContext() , "frame_layout");
                 myRecycler.setAdapter(myAdapter);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

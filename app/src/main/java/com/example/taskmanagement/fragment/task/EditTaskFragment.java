@@ -62,8 +62,6 @@ public class EditTaskFragment extends Fragment implements View.OnClickListener {
     private Task oldTask;
     private TaskDao taskDao;
     private TextView textDate,textTime ;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
 
     public EditTaskFragment() {
         // Required empty public constructor
@@ -108,24 +106,20 @@ public class EditTaskFragment extends Fragment implements View.OnClickListener {
         }
         Log.d(TAG,"user :"+currentUser.toString());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        taskDao = new TaskDao( db , mAuth , getContext() , requireActivity().getSupportFragmentManager() , viewPager );
-        adapter = (VPAdapter) viewPager.getAdapter();
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
+        taskDao = new TaskDao( db , mAuth , getContext() , requireActivity().getSupportFragmentManager() );
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override

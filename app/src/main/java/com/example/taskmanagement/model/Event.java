@@ -5,12 +5,21 @@ import java.util.Objects;
 public class Event {
 
     private String id , title , description , lieu , category , status , image , startDate , endDate , email ;
+    private boolean favourite;
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
 
     public String getStartDate() {
         return startDate;
     }
 
-    public Event(String id, String title, String description, String lieu, String category, String status, String image, String startDate, String endDate , String email) {
+    public Event(String id, String title, String description, String lieu, String category, String status, String image, String startDate, String endDate , String email, boolean favourite) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -21,6 +30,7 @@ public class Event {
         this.startDate = startDate;
         this.endDate = endDate;
         this.email = email;
+        this.favourite = favourite;
     }
 
     public String getEmail() {
