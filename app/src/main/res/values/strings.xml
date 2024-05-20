@@ -65,8 +65,13 @@
     <string name="new_event">New event</string>
     <string name="note_date">14 Apr. 2024 , 19:27</string>
     <string name="add_password">Add password</string>
+    <string name="option">Option</string>
+    <string name="task">Task</string>
+    <string name="note">Note</string>
+    <string name="tasks">Tasks</string>
     <string-array name="task_etats">
         <item>finish</item>
         <item>pending</item>
     </string-array>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>

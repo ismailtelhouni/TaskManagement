@@ -5,10 +5,74 @@
     android:layout_height="match_parent"
     tools:context=".fragment.note.NoteFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        >
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            />
+        <RelativeLayout
+            android:id="@+id/layout_visibility"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <ImageButton
+                android:id="@+id/notes_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/baseline_done_24"
+                android:background="@color/white"
+                android:layout_alignParentEnd="true"
+                android:layout_marginVertical="8dp"
+                android:layout_marginEnd="15dp"
+                android:visibility="gone"
+                android:contentDescription="@string/date"
+                />
+            <TextView
+                android:id="@+id/notes_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/note_date"
+                android:textSize="10sp"
+                tools:ignore="SmallSp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginVertical="15dp"
+                android:layout_marginEnd="50dp"
+                />
+            <EditText
+                android:id="@+id/notes_input_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/title"
+                android:textColorHint="@color/black"
+                android:background="@null"
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                android:autofillHints="emailAddress"
+                android:inputType="text"
+                android:layout_below="@id/notes_date"
+                />
+            <EditText
+                android:id="@+id/notes_input_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/description"
+                android:textColorHint="@color/black"
+                android:background="@null"
+                android:paddingVertical="5dp"
+                android:paddingHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                android:autofillHints="emailAddress"
+                android:inputType="textMultiLine"
+                android:layout_below="@+id/notes_input_title"
+                />
+        </RelativeLayout>
+    </RelativeLayout>
 
 </FrameLayout>

@@ -14,68 +14,28 @@ import android.view.ViewGroup;
 import com.example.taskmanagement.R;
 import com.example.taskmanagement.adapters.VPAdapter;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link InformationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class InformationFragment extends Fragment {
     private static final String TAG = "TAGInformationFragment";
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
 
     public InformationFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment InformationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static InformationFragment newInstance(String param1, String param2) {
-        InformationFragment fragment = new InformationFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        adapter = (VPAdapter) viewPager.getAdapter();
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
-
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     @Override

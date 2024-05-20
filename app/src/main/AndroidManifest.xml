@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -13,14 +13,17 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.TaskManagement"
-        tools:targetApi="31">
+        tools:targetApi="31" >
+        <activity
+            android:name=".activity.FollowActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.ForgetPasswordActivity"
             android:exported="false" />
         <activity
             android:name=".activity.SplashActivity"
             android:exported="true"
-            android:theme="@style/Base.Theme.TaskManagement">
+            android:theme="@style/Base.Theme.TaskManagement" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

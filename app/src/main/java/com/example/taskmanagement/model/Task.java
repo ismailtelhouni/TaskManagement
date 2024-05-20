@@ -9,11 +9,11 @@ public class Task {
     private String etat;
     private String doc_url;
     private String img;
+    private boolean favourite;
 
     public Task() {
     }
-
-    public Task(String id, String title, String description, String date, String time, String etat, String doc_url, String img) {
+    public Task(String id, String title, String description, String date, String time, String etat, String doc_url, String img, boolean favourite) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -22,10 +22,19 @@ public class Task {
         this.etat = etat;
         this.doc_url = doc_url;
         this.img = img;
+        this.favourite = favourite;
     }
 
     public String getId() {
         return id;
+    }
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
     }
 
     public void setId(String id) {

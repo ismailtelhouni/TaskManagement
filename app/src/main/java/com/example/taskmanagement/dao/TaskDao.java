@@ -41,15 +41,11 @@ public class TaskDao {
     private final FirebaseUser currentUser;
     private final Context context;
     private final FragmentManager fragmentManager;
-    private final ViewPager2 viewPager;
-    private final VPAdapter adapter;
-    public TaskDao(FirebaseFirestore db, FirebaseAuth mAuth,Context context, FragmentManager fragmentManager , ViewPager2 viewPager) {
+    public TaskDao(FirebaseFirestore db, FirebaseAuth mAuth,Context context, FragmentManager fragmentManager ) {
         this.db = db;
         this.currentUser = mAuth.getCurrentUser();
         this.context=context;
         this.fragmentManager=fragmentManager;
-        this.viewPager = viewPager;
-        this.adapter = (VPAdapter) viewPager.getAdapter();
     }
     public void getTasks( OnTasksFetchListener listener) {
 
@@ -93,6 +89,9 @@ public class TaskDao {
 
                             String etat = document.getString("etat");
                             Task task1 = new Task();
+                            boolean favourite = Boolean.TRUE.equals(document.getBoolean("favourite"));
+
+                            task1.setFavourite(favourite);
                             task1.setId(document.getId());
                             task1.setTitle(title);
                             task1.setDescription(description);
@@ -114,12 +113,76 @@ public class TaskDao {
                 });
         }
     }
+    public void getTasksFavourite( OnTasksFetchListener listener) {
+
+        LinkedList<Task> tasks = new LinkedList<>();
+        String email = currentUser.getEmail();
+        if(email!=null){
+            CollectionReference userTasksRef = db.collection("user").document(email).collection("tasks");
+            userTasksRef
+                    .whereEqualTo("favourite",true)
+                    .orderBy("date", Query.Direction.DESCENDING)
+                    .get()
+                    .addOnCompleteListener((OnCompleteListener<QuerySnapshot>) task -> {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String title = document.getString("title");
+                                String description = document.getString("description");
+
+                                Timestamp timestamp = document.getTimestamp("date");
+                                Date date = null;
+                                if (timestamp != null) {
+                                    date = timestamp.toDate();
+                                }
+
+                                String dateString  = null;
+                                String timeString  = null;
+                                if (date != null) {
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+                                    String dateTimeString  = dateFormat.format(date);
+                                    String[] parts = dateTimeString.split(" ");
+
+                                    if (parts.length == 2) {
+                                        dateString = parts[0];
+                                        timeString = parts[1];
+
+                                        System.out.println("Date: " + dateString);
+                                        System.out.println("Time: " + timeString);
+                                    } else {
+                                        System.out.println("Format de date-heure invalide");
+                                    }
+                                }
+
+
+                                String etat = document.getString("etat");
+                                Task task1 = new Task();
+                                boolean favourite = Boolean.TRUE.equals(document.getBoolean("favourite"));
+
+                                task1.setFavourite(favourite);
+                                task1.setId(document.getId());
+                                task1.setTitle(title);
+                                task1.setDescription(description);
+                                task1.setDate(dateString);
+                                task1.setTime(timeString);
+                                task1.setDoc_url(document.getString("doc_url"));
+                                task1.setImg(document.getString("img"));
+                                task1.setEtat(etat);
+
+                                tasks.add(task1);
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            }
+                            Log.d(TAG, "Tâches récupérées avec succès : " + tasks);
+                            listener.onTasksFetchSuccess(tasks);
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            listener.onTasksFetchFailure(task.getException());
+                        }
+                    });
+        }
+    }
     public void save(Task taskModel , AddNewTaskFragment fragment){
 
         Map<String, Object> task = new HashMap<>();
-
-        Log.d(TAG , "timedvysvsdv :"+taskModel.getTime());
-
 
         String dateString = taskModel.getDate();
         String timeString = taskModel.getTime();
@@ -143,6 +206,7 @@ public class TaskDao {
         task.put("img",taskModel.getImg());
         task.put("doc_url",taskModel.getDoc_url());
         task.put("etat","EN_ATENTE");
+        task.put("favourite",false);
 
         CollectionReference userTasksRef = db.collection("user").document(currentUser.getEmail()).collection("tasks");
 
@@ -152,17 +216,10 @@ public class TaskDao {
                 Toast.makeText(context, "Add Task Success.", Toast.LENGTH_SHORT).show();
                 fragment.hideDialog();
                 Log.d(TAG, "DocumentSnapshot successfully written!");
-//                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                fragmentTransaction.replace(R.id.frame_layout, new HomeRecyclerViewsFragment());
-//                fragmentTransaction.addToBackStack(null);
-//                fragmentTransaction.commit();
-                HomeRecyclerViewsFragment recyclerViewsFragment = new HomeRecyclerViewsFragment();
-                if(adapter!=null){
-                    adapter.addFragment(recyclerViewsFragment);
-                    adapter.notifyDataSetChanged();
-                    viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
-                }
-
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_layout, new HomeRecyclerViewsFragment());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
             })
             .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
     }
@@ -196,24 +253,36 @@ public class TaskDao {
             task.put("img",taskModel.getImg());
             task.put("doc_url",taskModel.getDoc_url());
             task.put("etat",taskModel.getEtat());
+            task.put("favourite",taskModel.isFavourite());
             CollectionReference userTasksRef = db.collection("user").document(currentUser.getEmail()).collection("tasks");
             userTasksRef.document(task_id)
                 .update(task)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(context, "Add Task Success.", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "DocumentSnapshot successfully written!");
-//                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//                    fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance(task_id));
-//                    fragmentTransaction.addToBackStack(null);
-//                    fragmentTransaction.commit();
-                    TaskFragment fragment = TaskFragment.newInstance(task_id);
-                    if(adapter!=null){
-                        adapter.addFragment(fragment);
-                        adapter.notifyDataSetChanged();
-                        viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
-                    }
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance(task_id));
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
+        }
+    }
+    public void favourite( String task_id , Task taskModel ){
+
+        if(currentUser.getEmail() != null){
+
+            Map<String, Object> task = new HashMap<>();
+
+            task.put("favourite",taskModel.isFavourite());
+
+            CollectionReference userTasksRef = db.collection("user").document(currentUser.getEmail()).collection("tasks");
+            userTasksRef.document(task_id)
+                    .update(task)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(context, "Add to favourite.", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
         }
     }
     public void delete(String taskId, OnTaskDeleteListener listener){
@@ -233,6 +302,7 @@ public class TaskDao {
 
     }
     public void getTask( String taskId , OnTaskFetchListener listener ){
+
         DocumentReference userTaskRef = db.collection("user").document(currentUser.getEmail()).collection("tasks").document(taskId);
         userTaskRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -264,7 +334,9 @@ public class TaskDao {
                             System.out.println("Format de date-heure invalide");
                         }
                     }
+                    boolean favourite = Boolean.TRUE.equals(document.getBoolean("favourite"));
 
+                    taskItem.setFavourite(favourite);
                     taskItem.setId(taskId);
                     taskItem.setTitle(document.getString("title"));
                     taskItem.setDescription(document.getString("description"));

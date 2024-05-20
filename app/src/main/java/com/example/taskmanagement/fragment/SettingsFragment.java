@@ -39,7 +39,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private RelativeLayout progressBar , itemVisibility ;
     private TextView userName,email;
     private UserDao userDao;
-    private ViewPager2 viewPager;
     public SettingsFragment() {
         // Required empty public constructor
     }
@@ -49,7 +48,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         userDao = new UserDao(db, mAuth, getContext(), requireActivity().getSupportFragmentManager() );
-        viewPager = requireActivity().findViewById(R.id.viewPager);
     }
     private void fetchDataAndProcess(){
         showDialog();
@@ -106,55 +104,28 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
 
-        VPAdapter adapter = (VPAdapter) viewPager.getAdapter();
-
         if (view.getId()==R.id.card_edit_profile){
-
             Log.d(TAG,"edite Profile");
-//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.frame_layout, new EditeProfileFragment() );
-//            fragmentTransaction.addToBackStack(null);
-//            fragmentTransaction.commit();
-            EditeProfileFragment fragment = new EditeProfileFragment();
-            if(adapter!=null){
-                adapter.addFragment(fragment);
-                adapter.notifyDataSetChanged();
-                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
-            }
-
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, new EditeProfileFragment() );
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         } else if (view.getId()==R.id.card_information) {
-
             Log.d(TAG,"information");
-//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.frame_layout, new InformationFragment());
-//            fragmentTransaction.addToBackStack(null);
-//            fragmentTransaction.commit();
-            InformationFragment fragment = new InformationFragment();
-            if(adapter!=null){
-                adapter.addFragment(fragment);
-                adapter.notifyDataSetChanged();
-                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
-            }
-
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, new InformationFragment());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         } else if (view.getId()==R.id.card_change_password) {
-
             Log.d(TAG,"change password");
-//            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.frame_layout, new ChangePasswordFragment());
-//            fragmentTransaction.addToBackStack(null);
-//            fragmentTransaction.commit();
-            ChangePasswordFragment fragment = new ChangePasswordFragment();
-            if(adapter!=null){
-                adapter.addFragment(fragment);
-                adapter.notifyDataSetChanged();
-                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
-            }
-
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, new ChangePasswordFragment());
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
         } else if (view.getId()==R.id.card_log_out) {
-
             Log.d(TAG,"log out");
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(getContext(), AuthActivity.class);

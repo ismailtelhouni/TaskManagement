@@ -1,28 +1,35 @@
 package com.example.taskmanagement.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.dao.EventDao;
+import com.example.taskmanagement.dao.NoteDao;
 import com.example.taskmanagement.fragment.event.EventFragment;
-import com.example.taskmanagement.fragment.task.TaskFragment;
+import com.example.taskmanagement.fragment.event.EventsFragment;
+import com.example.taskmanagement.fragment.note.NotesFragment;
 import com.example.taskmanagement.model.Event;
-import com.example.taskmanagement.model.Task;
+import com.example.taskmanagement.model.Note;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
@@ -33,19 +40,14 @@ public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyView
     private static final String TAG = "TAGMyAdapterEvents";
     private final LinkedList<Event> events;
     private final Context context;
-    private final FirebaseFirestore db;
-    private final FirebaseUser currentUser;
     private final FragmentManager fragmentManager;
-    private final ViewPager2 viewPager;
+    private final EventDao eventDao;
 
-    public MyAdapterEvents(LinkedList<Event> events, Context context, FragmentManager fragmentManager , ViewPager2 viewPager ) {
+    public MyAdapterEvents(LinkedList<Event> events, Context context , FragmentManager fragmentManager ) {
         this.events = events;
         this.context = context;
         this.fragmentManager = fragmentManager;
-        this.db = FirebaseFirestore.getInstance();
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        this.currentUser = mAuth.getCurrentUser();
-        this.viewPager = viewPager;
+        this.eventDao = new EventDao( FirebaseFirestore.getInstance() , FirebaseAuth.getInstance() , context , fragmentManager );
     }
 
     @NonNull
@@ -71,18 +73,86 @@ public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyView
             .into(holder.image);
 
         holder.card.setOnClickListener(view -> {
-//            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//            fragmentTransaction.replace(R.id.viewPager, EventFragment.newInstance(event.getId()));
-//            fragmentTransaction.addToBackStack(null);
-//            fragmentTransaction.commit();
-            VPAdapter adapter = (VPAdapter) viewPager.getAdapter();
-            EventFragment fragment = EventFragment.newInstance(event.getId());
-            if(adapter!=null){
-                adapter.addFragment(fragment);
-                adapter.notifyDataSetChanged();
-                viewPager.setCurrentItem(adapter.getItemCount() - 1, true);
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance(event.getId()));
+            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+        });
+        holder.card.setOnLongClickListener(view -> {
+
+            holder.card.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D4E7F5")));
+
+            PopupMenu popupMenu = showMenu(view , event);
+
+            return true;
+        });
+    }
+    private PopupMenu showMenu(View view, Event event) {
+
+        PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+        String followEtat = "Favourite";
+        if( event.isFavourite()  ){
+            followEtat = "Unfavourite";
+        }
+        popupMenu.getMenu().add(followEtat);
+        popupMenu.getMenu().add("Delete");
+        popupMenu.show();
+
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+            switch (menuItem.getTitle().toString()) {
+                case "Favourite":
+                case "Unfavourite":
+                    favouriteItem(event);
+                    return true;
+                case "Delete":
+                    deleteItem(event);
+                    return true;
+                default:
+                    return false;
             }
         });
+
+        return popupMenu;
+    }
+    private void deleteItem(Event event) {
+
+        AlertDialog alertDialog = new MaterialAlertDialogBuilder( context )
+                .setTitle("Delete")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        eventDao.delete(event.getId(), new EventDao.OnEventDeleteListener() {
+                            @Override
+                            public void onEventDeleteSuccess() {
+                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                                fragmentTransaction.replace(R.id.frame_layout, new EventsFragment());
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                            }
+
+                            @Override
+                            public void onEventDeleteFailure(Exception e) {
+                                Log.e(TAG, "Erreur lors de la suppression du event : ", e);
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .create();
+        alertDialog.show();
+
+    }
+
+    private void favouriteItem(Event event) {
+
+        event.setFavourite( !event.isFavourite() );
+        eventDao.favourite( event.getId() , event );
+
     }
 
     @Override

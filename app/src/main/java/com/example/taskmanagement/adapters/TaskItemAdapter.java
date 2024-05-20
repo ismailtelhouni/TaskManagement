@@ -112,7 +112,7 @@ public class TaskItemAdapter extends BaseAdapter{
         cardView.setOnClickListener(v -> {
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.viewPager, TaskFragment.newInstance(currentTask.getId()));
+            fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance(currentTask.getId()));
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         });

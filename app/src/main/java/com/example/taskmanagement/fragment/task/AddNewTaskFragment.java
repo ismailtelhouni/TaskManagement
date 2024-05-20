@@ -62,8 +62,6 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
     private CardView btnDate , btnTime;
     private TextView textDate,textTime ;
     private String StringTime;
-    private ViewPager2 viewPager;
-    private VPAdapter adapter;
 
     @Override
     public void onStart() {
@@ -89,23 +87,19 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
                         .into(imageUpload);
                 }
             });
-        viewPager = requireActivity().findViewById(R.id.viewPager);
-        adapter = (VPAdapter) viewPager.getAdapter();
-        if (adapter!=null)
-            adapter.addFragmentBack(this);
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
-            @Override
-            public void handleOnBackPressed() {
-                // Handle the back button event
-
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-            }
-        };
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+//            @Override
+//            public void handleOnBackPressed() {
+//                // Handle the back button event
+//
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
+//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
+//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
+//            }
+//        };
+//        requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
 
     }
 
@@ -117,7 +111,7 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("tasks");
-        taskDao = new TaskDao( db , mAuth , getContext() , getActivity().getSupportFragmentManager() , requireActivity().findViewById( R.id.viewPager ) );
+        taskDao = new TaskDao( db , mAuth , getContext() , requireActivity().getSupportFragmentManager() );
 
         titleEditText = view.findViewById(R.id.title);
         descriptionEditText = view.findViewById(R.id.description);
@@ -152,6 +146,7 @@ public class AddNewTaskFragment extends Fragment implements View.OnClickListener
                         task.setImg(urlImage);
                         Log.d(TAG , "timedvysvsdv :"+task.getTime());
                         // Ajouter la nouvelle tâche avec l'image à la base de données
+                        taskDao.save( task ,this);
                         taskDao.save( task ,this);
                     }).addOnFailureListener(e -> {
                         // Échec de l'obtention de l'URL de téléchargement

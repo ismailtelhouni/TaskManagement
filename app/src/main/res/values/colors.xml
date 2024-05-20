@@ -5,8 +5,8 @@
     <color name="color_pending">#F44336</color>
     <color name="color_finish">#00EC0A</color>
     <color name="gray">#595959</color>
-    <color name="primary">#EB5B8C</color>
-    <color name="secondary">#E6789E</color>
-    <color name="primaryBg">#EDD1DB</color>
+    <color name="primary">#CFBF33</color>
+    <color name="secondary">#EDE490</color>
+    <color name="primaryBg">#E8E3B7</color>
     <color name="color_court">#FF9800</color>
 </resources>

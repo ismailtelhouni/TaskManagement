@@ -1,53 +1,50 @@
 package com.example.taskmanagement.adapters;
 
+import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import com.example.taskmanagement.R;
 import com.example.taskmanagement.fragment.task.TaskFragment;
 
 import java.util.ArrayList;
 
-public class VPAdapter extends FragmentStateAdapter {
+public class VPAdapter extends ArrayAdapter<String> {
     private static final String TAG = "TAGVPAdapter";
-    private final ArrayList<Fragment> arr;
-    private final ArrayList<Fragment> listBack;
+    private Context context;
+    private String[] options;
 
-    public VPAdapter( @NonNull FragmentActivity fragmentActivity , ArrayList<Fragment> arr ) {
-        super(fragmentActivity);
-
-        this.arr = arr;
-        this.listBack=new ArrayList<>();
+    public VPAdapter( Context context, int resource, String[] options ) {
+        super(context, resource, options);
+        this.context = context;
+        this.options = options;
 
     }
 
     @NonNull
     @Override
-    public Fragment createFragment(int position) { return arr.get(position); }
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        View view = convertView;
+        if (view == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            view = inflater.inflate(R.layout.custom_dialog_item, parent, false);
+        }
 
-    @Override
-    public int getItemCount() { return arr.size(); }
+        TextView textView = view.findViewById(R.id.textView);
 
-    public void addFragment( Fragment fragment) {
+        textView.setText(options[position]);
 
-        arr.add(fragment);
-    }
-
-    public void addFragmentBack( Fragment fragment) {
-
-        listBack.add(fragment);
-    }
-
-    public int getSizeBack() { return listBack.size(); }
-
-
-    public void addFragmentWithPosition( int position ) {
-
-        Log.d(TAG , " fragment : " + listBack.get(position) );
-        arr.add(listBack.get(position));
+        return view;
     }
 
 }

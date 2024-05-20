@@ -22,25 +22,6 @@
             app:menu="@menu/app_bar_menu"
             />
     </com.google.android.material.appbar.AppBarLayout>
-
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="horizontal"-->
-<!--        android:gravity="end"-->
-<!--        >-->
-<!--        <ImageButton-->
-<!--            android:id="@+id/dropdownButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:srcCompat="@drawable/menu24px"-->
-<!--            android:background="@color/white"-->
-<!--            android:padding="8dp"-->
-<!--            android:contentDescription="@string/menu"-->
-<!--            android:minWidth="48dp"-->
-<!--            android:minHeight="48dp"-->
-<!--            />-->
-<!--    </LinearLayout>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -48,20 +29,15 @@
         android:gravity="center"
         android:orientation="vertical"
         >
-<!--        <FrameLayout-->
-<!--            android:id="@+id/frame_layout"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            />-->
-        <androidx.viewpager2.widget.ViewPager2
+        <FrameLayout
+            android:id="@+id/frame_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/viewPager"
             />
-<!--        <com.google.android.material.tabs.TabLayout-->
-<!--            android:id="@+id/tabLayout"-->
+<!--        <androidx.viewpager2.widget.ViewPager2-->
 <!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:id="@+id/viewPager"-->
 <!--            />-->
 
     </LinearLayout>
