@@ -39,8 +39,9 @@ import java.util.Objects;
  */
 public class EventFragment extends Fragment implements View.OnClickListener {
     private static final String EVENT_ID = "1";
+    private static final String FRAME = "2";
     private static final String TAG = "TAGEventFragment";
-    private String event_id;
+    private String event_id , frame;
     private TextView eventItemTitle , eventItemDate , eventItemDescription , eventItemLieu , eventItemCategory , itemDateRest ;
     private FirebaseUser currentUser;
     private ImageView eventItemStatus , eventItemImage ;
@@ -55,12 +56,14 @@ public class EventFragment extends Fragment implements View.OnClickListener {
      * this fragment using the provided parameters.
      *
      * @param event_id Parameter 1.
+     * @param frame Parameter 2.
      * @return A new instance of fragment EventFragment.
      */
-    public static EventFragment newInstance( String event_id ) {
+    public static EventFragment newInstance( String event_id , String frame ) {
         EventFragment fragment = new EventFragment();
         Bundle args = new Bundle();
         args.putString(EVENT_ID, event_id);
+        args.putString(FRAME, frame);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,6 +73,7 @@ public class EventFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             event_id = getArguments().getString(EVENT_ID);
+            frame = getArguments().getString(FRAME);
         }
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -197,6 +201,11 @@ public class EventFragment extends Fragment implements View.OnClickListener {
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.frame_layout, EditEventFragment.newInstance(event_id));
+            if (Objects.equals(frame, "frame_layout_follow")){
+                fragmentTransaction.replace(R.id.frame_layout_follow, EditEventFragment.newInstance( event_id ));
+            }else if (Objects.equals(frame, "frame_layout")){
+                fragmentTransaction.replace(R.id.frame_layout, EditEventFragment.newInstance( event_id ));
+            }
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
 

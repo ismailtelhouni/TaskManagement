@@ -42,8 +42,9 @@ import com.example.taskmanagement.model.Task;
  */
 public class TaskFragment extends Fragment implements View.OnClickListener {
     private static final String TASK_ID = "1";
+    private static final String FRAME = "2";
     private static final String TAG = "TAGTaskFragment";
-    private String task_id;
+    private String task_id , frame ;
     private TextView taskItemTitle ,taskItemDate , taskItemDescription ;
     private FirebaseFirestore db;
     private ImageView taskItemDone , taskItemPending , taskItemImg;
@@ -62,13 +63,15 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
      * this fragment using the provided parameters.
      *
      * @param id Parameter 1.
+     * @param frame Parameter 2.
      * @return A new instance of fragment TaskFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TaskFragment newInstance(String id) {
+    public static TaskFragment newInstance( String id , String frame ) {
         TaskFragment fragment = new TaskFragment();
         Bundle args = new Bundle();
         args.putString(TASK_ID, id);
+        args.putString(FRAME, frame);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,6 +81,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             task_id = getArguments().getString(TASK_ID);
+            frame = getArguments().getString(FRAME);
         }
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -154,7 +158,7 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
                                     .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully updated!"))
                                     .addOnFailureListener(e -> Log.w(TAG, "Error updating document", e));
                             }
-                        }else{
+                        } else{
 
                             taskItemDone.setVisibility(View.GONE);
                             taskItemPending.setVisibility(View.VISIBLE);
@@ -216,7 +220,11 @@ public class TaskFragment extends Fragment implements View.OnClickListener {
 
             FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, EditTaskFragment.newInstance(task_id));
+            if (Objects.equals(frame, "frame_layout_follow")){
+                fragmentTransaction.replace(R.id.frame_layout_follow, EditTaskFragment.newInstance(task_id));
+            }else if (Objects.equals(frame, "frame_layout")){
+                fragmentTransaction.replace(R.id.frame_layout, EditTaskFragment.newInstance(task_id));
+            }
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
 

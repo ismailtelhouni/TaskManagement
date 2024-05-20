@@ -37,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MyAdapterNote extends RecyclerView.Adapter<MyAdapterNote.MyViewHolder>{
     private static final String TAG = "TAGMyAdapterNote";
@@ -44,12 +45,14 @@ public class MyAdapterNote extends RecyclerView.Adapter<MyAdapterNote.MyViewHold
     private final FragmentManager fragmentManager;
     private final Context context;
     private final NoteDao noteDao;
+    private final String frame;
 
-    public MyAdapterNote( LinkedList<Note> notes , FragmentManager fragmentManager , Context context) {
+    public MyAdapterNote( LinkedList<Note> notes , FragmentManager fragmentManager , Context context , String frame ) {
         this.notes = notes;
         this.fragmentManager = fragmentManager;
         this.context = context;
         this.noteDao = new NoteDao( FirebaseFirestore.getInstance() , FirebaseAuth.getInstance() , context , fragmentManager );
+        this.frame = frame;
     }
 
     @NonNull
@@ -100,7 +103,11 @@ public class MyAdapterNote extends RecyclerView.Adapter<MyAdapterNote.MyViewHold
             public void onClick(View view) {
 
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frame_layout, NoteFragment.newInstance(note.getId()));
+                if (Objects.equals(frame, "frame_layout_follow")){
+                    fragmentTransaction.replace(R.id.frame_layout_follow, NoteFragment.newInstance( note.getId() , frame ));
+                }else if (Objects.equals(frame, "frame_layout")){
+                    fragmentTransaction.replace(R.id.frame_layout, NoteFragment.newInstance( note.getId() , frame ));
+                }
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
 

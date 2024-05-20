@@ -99,7 +99,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
                         filtres.add(event);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapterEvents myAdapterEvents = new MyAdapterEvents(filtres,getContext() , requireActivity().getSupportFragmentManager());
+                    MyAdapterEvents myAdapterEvents = new MyAdapterEvents(filtres,getContext() , requireActivity().getSupportFragmentManager() , "frame_layout");
 
                     myRecycler.setAdapter(myAdapterEvents);
 
@@ -124,7 +124,7 @@ public class EventsFragment extends Fragment implements View.OnClickListener{
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapterEvents myAdapterEvents = new MyAdapterEvents(events,getContext() ,requireActivity().getSupportFragmentManager());
+                MyAdapterEvents myAdapterEvents = new MyAdapterEvents(events,getContext() ,requireActivity().getSupportFragmentManager() , "frame_layout");
                 myRecycler.setAdapter(myAdapterEvents);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

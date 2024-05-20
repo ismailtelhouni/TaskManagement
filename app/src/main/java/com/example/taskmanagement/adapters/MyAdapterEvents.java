@@ -26,6 +26,7 @@ import com.example.taskmanagement.dao.NoteDao;
 import com.example.taskmanagement.fragment.event.EventFragment;
 import com.example.taskmanagement.fragment.event.EventsFragment;
 import com.example.taskmanagement.fragment.note.NotesFragment;
+import com.example.taskmanagement.fragment.task.TaskFragment;
 import com.example.taskmanagement.model.Event;
 import com.example.taskmanagement.model.Note;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -34,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyViewHolder>{
 
@@ -42,12 +44,14 @@ public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyView
     private final Context context;
     private final FragmentManager fragmentManager;
     private final EventDao eventDao;
+    private final String frame;
 
-    public MyAdapterEvents(LinkedList<Event> events, Context context , FragmentManager fragmentManager ) {
+    public MyAdapterEvents(LinkedList<Event> events, Context context , FragmentManager fragmentManager , String frame ) {
         this.events = events;
         this.context = context;
         this.fragmentManager = fragmentManager;
         this.eventDao = new EventDao( FirebaseFirestore.getInstance() , FirebaseAuth.getInstance() , context , fragmentManager );
+        this.frame = frame;
     }
 
     @NonNull
@@ -74,7 +78,11 @@ public class MyAdapterEvents extends RecyclerView.Adapter<MyAdapterEvents.MyView
 
         holder.card.setOnClickListener(view -> {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance(event.getId()));
+            if (Objects.equals(frame, "frame_layout_follow")){
+                fragmentTransaction.replace(R.id.frame_layout_follow, EventFragment.newInstance( event.getId() , frame ));
+            }else if (Objects.equals(frame, "frame_layout")){
+                fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance( event.getId() , frame ));
+            }
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         });

@@ -239,7 +239,7 @@ public class EventDao {
                     Toast.makeText(context, "update Event Success.", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "DocumentSnapshot successfully written!");
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance(event_id));
+                    fragmentTransaction.replace(R.id.frame_layout, EventFragment.newInstance(event_id,"frame_layout"));
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
                 })

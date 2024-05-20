@@ -101,7 +101,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                         filtres.add(task);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapter myAdapter = new MyAdapter(filtres , requireActivity().getSupportFragmentManager() , requireContext());
+                    MyAdapter myAdapter = new MyAdapter( filtres , requireActivity().getSupportFragmentManager() , requireContext() , "frame_layout");
 
                     myRecycler.setAdapter(myAdapter);
 
@@ -126,7 +126,7 @@ public class HomeRecyclerViewsFragment extends Fragment {
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapter myAdapter = new MyAdapter(tasks, requireActivity().getSupportFragmentManager() , requireContext());
+                MyAdapter myAdapter = new MyAdapter(tasks, requireActivity().getSupportFragmentManager() , requireContext() , "frame_layout");
                 myRecycler.setAdapter(myAdapter);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

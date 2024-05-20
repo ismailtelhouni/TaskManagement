@@ -47,10 +47,11 @@ import java.util.Objects;
 public class NoteFragment extends Fragment implements View.OnClickListener {
 
     private static final String NOTE_ID = "0";
+    private static final String FRAME = "2";
     private static final String TAG = "TAGNoteFragment";
     private EditText notesInputDescription , notesInputTitle;
     private NoteDao noteDao;
-    private String noteId;
+    private String noteId , frame;
     private Note oldNote;
     private TextView noteDate;
     private ProgressBar progressBar;
@@ -65,14 +66,16 @@ public class NoteFragment extends Fragment implements View.OnClickListener {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param id Parameter 2.
+     * @param id Parameter 1.
+     * @param frame Parameter 2.
      * @return A new instance of fragment NoteFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NoteFragment newInstance(String id) {
+    public static NoteFragment newInstance( String id , String frame ) {
         NoteFragment fragment = new NoteFragment();
         Bundle args = new Bundle();
         args.putString(NOTE_ID, id);
+        args.putString(FRAME, frame);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,6 +86,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener {
 
         if (getArguments() != null) {
             noteId = getArguments().getString(NOTE_ID);
+            frame = getArguments().getString(FRAME);
         }
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -244,7 +248,7 @@ public class NoteFragment extends Fragment implements View.OnClickListener {
 
                 FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frame_layout, NoteFragment.newInstance(noteId));
+                fragmentTransaction.replace(R.id.frame_layout, NoteFragment.newInstance(noteId , frame));
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
 

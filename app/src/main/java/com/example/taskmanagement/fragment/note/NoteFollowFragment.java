@@ -78,7 +78,7 @@ public class NoteFollowFragment extends Fragment {
                         filtres.add(note);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapterNote myAdapter = new MyAdapterNote(filtres , requireActivity().getSupportFragmentManager() , requireContext());
+                    MyAdapterNote myAdapter = new MyAdapterNote(filtres , requireActivity().getSupportFragmentManager() , requireContext() , "frame_layout_follow");
 
                     recycler.setAdapter(myAdapter);
 
@@ -107,7 +107,7 @@ public class NoteFollowFragment extends Fragment {
                 hideDialog();
                 recycler.setHasFixedSize(true);
 
-                MyAdapterNote myAdapter = new MyAdapterNote(notes, requireActivity().getSupportFragmentManager() , requireContext() );
+                MyAdapterNote myAdapter = new MyAdapterNote(notes, requireActivity().getSupportFragmentManager() , requireContext() , "frame_layout_follow");
                 recycler.setAdapter(myAdapter);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

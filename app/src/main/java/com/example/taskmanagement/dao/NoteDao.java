@@ -199,7 +199,7 @@ public class NoteDao {
                             Log.d(TAG, "DocumentSnapshot successfully written!");
                             String documentId = documentReference.getId();
                             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                            fragmentTransaction.replace(R.id.frame_layout, NoteFragment.newInstance(documentId));
+                            fragmentTransaction.replace(R.id.frame_layout, NoteFragment.newInstance(documentId , "frame_layout"));
                             fragmentTransaction.addToBackStack(null);
                             fragmentTransaction.commit();
                         }
@@ -228,7 +228,7 @@ public class NoteDao {
                         Toast.makeText(context, "update Note Success.", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "DocumentSnapshot successfully written!");
                         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.frame_layout, NoteFragment.newInstance(id));
+                        fragmentTransaction.replace(R.id.frame_layout, NoteFragment.newInstance(id,"frame_layout"));
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                     }

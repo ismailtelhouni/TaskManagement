@@ -1,5 +1,6 @@
 package com.example.taskmanagement.activity;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -45,19 +46,18 @@ public class TasksActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
 
                 if(item.getItemId()==R.id.menu_favorite){
-                    Toast.makeText(TasksActivity.this , "Vous avez cliqué sur le menu favorite",Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent( getApplicationContext() , FollowActivity.class );
                     startActivity(intent);
                     return true;
                 } else if (item.getItemId()==R.id.menu_new_event) {
                     AddEventFragment fragment = new AddEventFragment();
-                    replaceFragment(fragment);
+                    replaceFragment(fragment , true);
 
                     return true;
                 } else if (item.getItemId()==R.id.menu_new_note) {
 
                     NewNoteFragment fragment = new NewNoteFragment();
-                    replaceFragment(fragment);
+                    replaceFragment(fragment , true);
 
                     return true;
                 } else if (item.getItemId()==R.id.menu_settings) {
@@ -68,53 +68,34 @@ public class TasksActivity extends AppCompatActivity {
             }
         });
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationOnClickListener(view -> getOnBackPressedDispatcher().onBackPressed());
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
-            public void onClick(View view) {
-
-//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-//                adapter.addFragmentWithPosition( adapter.getSizeBack()-2 );
-//                Log.d(TAG , " adapter.getItemCount() : " + adapter.getItemCount() );
-//                viewPager.setCurrentItem( adapter.getItemCount()-1 , false );
-
-//                Log.d(TAG , "tesssssssssssssssssssst"+ fragmentPage );
-//
-//                switch(fragmentPage){
-//                    case "HOME":
-//                        viewPager.setCurrentItem(0);
-//                        break;
-//                    case "ADD_NEW_TASK":
-//                        viewPager.setCurrentItem(1);
-//                        break;
-//                    case "EVENTS":
-//                        viewPager.setCurrentItem(2);
-//                        break;
-//                    case "NOTES":
-//                        viewPager.setCurrentItem(3);
-//                        break;
-//                    case "SETTINGS":
-//                        viewPager.setCurrentItem(4);
-//                        break;
-//                }
+            public void handleOnBackPressed() {
+                if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                    getSupportFragmentManager().popBackStack();
+                } else {
+                    finish();
+                }
             }
         });
 
         user = mAuth.getCurrentUser();
-        replaceFragment(new HomeRecyclerViewsFragment());
+        replaceFragment(new HomeRecyclerViewsFragment() , false);
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
 
             int itemId = item.getItemId();
             if(itemId == R.id.home){
-                replaceFragment(new HomeRecyclerViewsFragment());
+                replaceFragment(new HomeRecyclerViewsFragment() , true);
 
             } else if( itemId == R.id.add_new_task ){
-                replaceFragment(new AddNewTaskFragment());
+                replaceFragment(new AddNewTaskFragment() , true);
             } else if(itemId == R.id.settings){
-                replaceFragment(new SettingsFragment());
+                replaceFragment(new SettingsFragment() , true );
             } else if(itemId == R.id.events){
-                replaceFragment(new EventsFragment());
+                replaceFragment(new EventsFragment() , true );
             } else if(itemId == R.id.notes ){
-                replaceFragment(new NotesFragment() );
+                replaceFragment(new NotesFragment() , true);
             }
             return true;
         });
@@ -125,48 +106,13 @@ public class TasksActivity extends AppCompatActivity {
             finish();
         }
 
-//        if (getIntent().getBooleanExtra("navigate_to_forget_password", false)) {
-//
-//            getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.frame_layout, new ForgetPasswordFragment())
-//                .commit();
-//        }
-
-//        dropdownButton.setOnClickListener(v->{
-//            PopupMenu popupMenu = new PopupMenu(TasksActivity.this, dropdownButton);
-//            popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
-//            popupMenu.setOnMenuItemClickListener(item -> {
-//                int itemId = item.getItemId();
-//                if (itemId == R.id.menu_item1) {
-//                    // Code à exécuter lorsque l'option 1 est sélectionnée
-//                    FirebaseAuth.getInstance().signOut();
-//                    Intent intent = new Intent(TasksActivity.this, AuthActivity.class);
-//                    startActivity(intent);
-//                    finish();
-//                    return true;
-//                } else if (itemId == R.id.menu_item2) {
-//                    // Code à exécuter lorsque l'option 1 est sélectionnée
-//                    FirebaseAuth.getInstance().signOut();
-//                    Intent intent = new Intent(TasksActivity.this, AuthActivity.class);
-//                    startActivity(intent);
-//                    finish();
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//            });
-//            popupMenu.show();
-//        });
-
     }
-    private void replaceFragment( Fragment fragment ) {
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, fragment );
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-
+    private void replaceFragment(Fragment fragment, boolean addToBackStack) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.frame_layout, fragment);
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
     }
-
 }

@@ -1,7 +1,9 @@
 package com.example.taskmanagement.fragment.task;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.example.taskmanagement.R;
+import com.example.taskmanagement.activity.TasksActivity;
 import com.example.taskmanagement.adapters.MyAdapter;
 import com.example.taskmanagement.dao.TaskDao;
 import com.example.taskmanagement.model.Task;
@@ -28,12 +31,9 @@ import java.util.LinkedList;
 public class TaskFollowFragment extends Fragment {
 
     private static final String TAG = "TAGTaskFollowFragment";
-    private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
     private TaskDao taskDao;
     private ProgressBar progressBar;
     private RelativeLayout layoutVisibility;
-    private EditText search;
     private RecyclerView recycler;
     private LinkedList<Task> taskList;
     public TaskFollowFragment() {
@@ -44,9 +44,9 @@ public class TaskFollowFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-        taskDao = new TaskDao( db , mAuth , getContext() , requireActivity().getSupportFragmentManager() );
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        taskDao = new TaskDao(db, mAuth, getContext() , requireActivity().getSupportFragmentManager() );
     }
 
     @Override
@@ -57,8 +57,17 @@ public class TaskFollowFragment extends Fragment {
 
         progressBar = view.findViewById(R.id.progressBar);
         layoutVisibility = view.findViewById(R.id.layout_visibility);
-        search = view.findViewById(R.id.search);
+        EditText search = view.findViewById(R.id.search);
         recycler = view.findViewById(R.id.recycle);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent intent = new Intent( requireContext() , TasksActivity.class );
+                startActivity(intent);
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -75,7 +84,7 @@ public class TaskFollowFragment extends Fragment {
                         filtres.add(task);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapter myAdapter = new MyAdapter(filtres , requireActivity().getSupportFragmentManager() , requireContext());
+                    MyAdapter myAdapter = new MyAdapter(filtres , requireActivity().getSupportFragmentManager() , requireContext() , "frame_layout_follow");
 
                     recycler.setAdapter(myAdapter);
 
@@ -104,7 +113,7 @@ public class TaskFollowFragment extends Fragment {
                 hideDialog();
                 recycler.setHasFixedSize(true);
 
-                MyAdapter myAdapter = new MyAdapter(tasks, requireActivity().getSupportFragmentManager() , requireContext() );
+                MyAdapter myAdapter = new MyAdapter(tasks, requireActivity().getSupportFragmentManager() , requireContext() , "frame_layout_follow");
                 recycler.setAdapter(myAdapter);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

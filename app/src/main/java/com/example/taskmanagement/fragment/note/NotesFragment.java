@@ -109,7 +109,7 @@ public class NotesFragment extends Fragment {
                         filtres.add(note);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapterNote myAdapter = new MyAdapterNote(filtres , requireActivity().getSupportFragmentManager() , requireContext());
+                    MyAdapterNote myAdapter = new MyAdapterNote(filtres , requireActivity().getSupportFragmentManager() , requireContext() , "frame_layout");
 
                     myRecycler.setAdapter(myAdapter);
 
@@ -179,7 +179,7 @@ public class NotesFragment extends Fragment {
                 hideDialog();
                 myRecycler.setHasFixedSize(true);
 
-                MyAdapterNote myAdapter = new MyAdapterNote( notes , requireActivity().getSupportFragmentManager() , requireContext());
+                MyAdapterNote myAdapter = new MyAdapterNote( notes , requireActivity().getSupportFragmentManager() , requireContext() ,"frame_layout");
                 myRecycler.setAdapter(myAdapter);
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(myRecycler.getContext(), DividerItemDecoration.VERTICAL);
                 Drawable drawable = ContextCompat.getDrawable(requireContext(), R.drawable.divider);

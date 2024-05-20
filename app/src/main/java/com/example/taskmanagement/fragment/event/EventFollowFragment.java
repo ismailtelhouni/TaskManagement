@@ -78,7 +78,7 @@ public class EventFollowFragment extends Fragment {
                         filtres.add(event);
                     }
                     Log.d(TAG, "filtres récupérées avec succès : " + filtres);
-                    MyAdapterEvents myAdapterEvents = new MyAdapterEvents(filtres,getContext() , requireActivity().getSupportFragmentManager());
+                    MyAdapterEvents myAdapterEvents = new MyAdapterEvents(filtres,getContext() , requireActivity().getSupportFragmentManager() , "frame_layout_follow");
 
                     recycler.setAdapter(myAdapterEvents);
 
@@ -106,7 +106,7 @@ public class EventFollowFragment extends Fragment {
                 hideDialog();
                 recycler.setHasFixedSize(true);
 
-                MyAdapterEvents myAdapter = new MyAdapterEvents(events, requireContext() , requireActivity().getSupportFragmentManager());
+                MyAdapterEvents myAdapter = new MyAdapterEvents(events, requireContext() , requireActivity().getSupportFragmentManager() , "frame_layout_follow");
                 recycler.setAdapter(myAdapter);
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());

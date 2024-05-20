@@ -47,9 +47,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private final FragmentManager fragmentManager;
     private final TaskDao taskDao;
     private final Context context;
+    private final String frame;
 
 
-    public MyAdapter(LinkedList<Task> tasks , FragmentManager fragmentManager , Context context ) {
+    public MyAdapter(LinkedList<Task> tasks , FragmentManager fragmentManager , Context context , String frame ) {
         this.db = FirebaseFirestore.getInstance();
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         this.currentUser = mAuth.getCurrentUser();
@@ -57,6 +58,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         this.fragmentManager = fragmentManager;
         this.context = context;
         this.taskDao = new TaskDao( db , mAuth , context , fragmentManager );
+        this.frame = frame;
     }
     @NonNull
     @Override
@@ -110,7 +112,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         });
         holder.card.setOnClickListener(v -> {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance(task.getId()));
+            if (Objects.equals(frame, "frame_layout_follow")){
+                fragmentTransaction.replace(R.id.frame_layout_follow, TaskFragment.newInstance( task.getId() , frame ));
+            }else if (Objects.equals(frame, "frame_layout")){
+                fragmentTransaction.replace(R.id.frame_layout, TaskFragment.newInstance( task.getId() , frame ));
+            }
             fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
         });
