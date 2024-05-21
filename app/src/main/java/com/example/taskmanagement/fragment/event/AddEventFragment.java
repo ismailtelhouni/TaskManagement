@@ -187,7 +187,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener{
 
             DatePickerDialog dialog = new DatePickerDialog(
                     requireActivity(),
-                    androidx.appcompat.R.style.Theme_AppCompat_DayNight_Dialog_Alert,
+                    R.style.CustomDatePickerDialog,
                     onEndDateSetListener,
                     year,
                     month,
@@ -205,7 +205,7 @@ public class AddEventFragment extends Fragment implements View.OnClickListener{
 
             DatePickerDialog dialog = new DatePickerDialog(
                     requireActivity(),
-                    androidx.appcompat.R.style.Theme_AppCompat_DayNight_Dialog,
+                    R.style.CustomDatePickerDialog,
                     onDateSetListener,
                     year,
                     month,

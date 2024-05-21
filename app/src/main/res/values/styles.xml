@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomDatePickerDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorAccent">@color/primary</item> <!-- Couleur des boutons OK et Cancel -->
+        <item name="android:datePickerStyle">@style/CustomDatePicker</item>
+    </style>
+
+    <!-- Style personnalisé pour le DatePicker -->
+    <style name="CustomDatePicker" parent="android:Widget.Material.DatePicker">
+        <item name="android:headerBackground">@color/primary</item> <!-- Couleur de l'en-tête -->
+        <item name="android:textColor">@color/black</item> <!-- Couleur du texte -->
+    </style>
+</resources>
